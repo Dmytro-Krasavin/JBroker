@@ -41,6 +41,9 @@ public class ClientHandler extends Thread {
           case 0xC0: // PINGREQ packet
             handlePingreq(input, output);
             break;
+          case 0xE0: // DISCONNECT packet
+            handleDisconnect();
+            return; // Exit the loop and close the socket
           // Add more cases as you implement other packet types
           default:
             System.out.println("Unknown or unsupported packet type: " + packetType);
@@ -100,5 +103,13 @@ public class ClientHandler extends Thread {
     output.flush();
 
     log.info("%s:%s : PINGRESP packet sent to client", inetAddress.toString(), port);
+  }
+
+  private void handleDisconnect() {
+    log.info(
+        "%s:%s : Received DISCONNECT packet, closing connection",
+        inetAddress.toString(),
+        port
+    );
   }
 }
