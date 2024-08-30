@@ -1,18 +1,17 @@
-package com.example.tcp;
+package com.jbroker;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class SimpleTcpServer {
+public class SimpleMqttBroker {
 
-  private static final int PORT = 12345; // Port number to listen on
+  private static final int PORT = 1884; // Standard MQTT port
 
   public static void main(String[] args) {
     try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-      System.out.println("Server is listening on port " + PORT);
+      System.out.println("MQTT Broker is listening on port " + PORT);
 
-      // Infinite loop to accept client connections
       while (true) {
         Socket socket = serverSocket.accept();
         System.out.println("New client connected: " + socket.toString());
