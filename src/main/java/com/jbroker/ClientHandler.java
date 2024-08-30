@@ -38,6 +38,9 @@ public class ClientHandler extends Thread {
           case 0x10: // CONNECT packet
             handleConnect(input, output);
             break;
+          case 0xC0: // PINGREQ packet
+            handlePingreq(input, output);
+            break;
           // Add more cases as you implement other packet types
           default:
             System.out.println("Unknown or unsupported packet type: " + packetType);
@@ -76,5 +79,26 @@ public class ClientHandler extends Thread {
     output.flush();
 
     log.info("%s:%s : CONNACK packet sent to client", inetAddress.toString(), port);
+  }
+
+  private void handlePingreq(InputStream input, OutputStream output) throws IOException {
+    // PINGREQ is a fixed two-byte packet
+    int remainingLength = input.read(); // Should be 0x00 for PINGREQ
+    if (remainingLength != 0x00) {
+      log.error("%s:%s : Invalid PINGREQ packet received", inetAddress.toString(), port);
+      return;
+    }
+
+    // Construct the PINGRESP packet
+    byte[] pingrespPacket = {
+        (byte) 0xD0, // PINGRESP packet type
+        (byte) 0x00  // Remaining length
+    };
+
+    // Send the PINGRESP packet back to the client
+    output.write(pingrespPacket);
+    output.flush();
+
+    log.info("%s:%s : PINGRESP packet sent to client", inetAddress.toString(), port);
   }
 }
