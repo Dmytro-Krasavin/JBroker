@@ -1,5 +1,6 @@
 package com.jbroker;
 
+import com.jbroker.logger.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,11 +12,13 @@ public class ClientHandler extends Thread {
   private final Socket socket;
   private final InetAddress inetAddress;
   private final int port;
+  private final Logger log;
 
   public ClientHandler(Socket socket) {
     this.socket = socket;
     this.inetAddress = socket.getInetAddress();
     this.port = socket.getPort();
+    this.log = Logger.getInstance();
   }
 
   @Override
@@ -72,10 +75,6 @@ public class ClientHandler extends Thread {
     output.write(connackPacket);
     output.flush();
 
-    log("CONNACK packet sent to client");
-  }
-
-  private void log(String message) {
-    System.out.printf("%s:%s : %s%n", inetAddress.toString(), port, message);
+    log.info("%s:%s : CONNACK packet sent to client", inetAddress.toString(), port);
   }
 }
