@@ -28,25 +28,26 @@ public class ClientHandler extends Thread {
 
       // Main loop to handle incoming packets
       while (true) {
-        int packetType = input.read();
-        if (packetType == -1) {
+        int firstByte = input.read();
+        if (firstByte == -1) {
           // End of stream reached, client disconnected
           break;
         }
 
-        switch (packetType) {
-          case 0x10: // CONNECT packet
+        int controlPacketType = getControlPacketType(firstByte);
+        switch (controlPacketType) {
+          case 1: // CONNECT packet
             handleConnect(input, output);
             break;
-          case 0xC0: // PINGREQ packet
+          case 12: // PINGREQ packet
             handlePingreq(input, output);
             break;
-          case 0xE0: // DISCONNECT packet
+          case 14: // DISCONNECT packet
             handleDisconnect();
             return; // Exit the loop and close the socket
           // Add more cases as you implement other packet types
           default:
-            System.out.println("Unknown or unsupported packet type: " + packetType);
+            System.out.println("Unknown or unsupported control packet type: " + controlPacketType);
             break;
         }
       }
@@ -111,5 +112,10 @@ public class ClientHandler extends Thread {
         inetAddress.toString(),
         port
     );
+  }
+
+  // @see https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Figure_2.2_-
+  private int getControlPacketType(int firstByte) {
+    return firstByte >> 4;
   }
 }
