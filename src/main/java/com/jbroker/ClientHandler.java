@@ -1,6 +1,8 @@
 package com.jbroker;
 
 import com.jbroker.logger.Logger;
+import com.jbroker.packet.MqttPacket;
+import com.jbroker.parser.PacketParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,12 +15,14 @@ public class ClientHandler extends Thread {
   private final InetAddress inetAddress;
   private final int port;
   private final Logger log;
+  private final PacketParser packetParser;
 
   public ClientHandler(Socket socket) {
     this.socket = socket;
     this.inetAddress = socket.getInetAddress();
     this.port = socket.getPort();
     this.log = Logger.getInstance();
+    this.packetParser = new PacketParser();
   }
 
   @Override
@@ -28,31 +32,33 @@ public class ClientHandler extends Thread {
 
       // Main loop to handle incoming packets
       while (true) {
-        int firstByte = input.read();
-        if (firstByte == -1) {
-          // End of stream reached, client disconnected
-          break;
+        if (input.available() == 0) {
+          // End of stream reached
+          continue;
         }
 
-        int controlPacketType = getControlPacketType(firstByte);
+        MqttPacket packet = packetParser.parse(input);
+        int controlPacketType = packet.fixedHeader().controlPacketType();
+        int remainingLength = packet.fixedHeader().remainingLength();
         switch (controlPacketType) {
           case 1: // CONNECT packet
-            handleConnect(input, output);
+            handleConnect(input, output, remainingLength);
             break;
           case 12: // PINGREQ packet
-            handlePingreq(input, output);
+            handlePingreq(output, remainingLength);
             break;
           case 14: // DISCONNECT packet
             handleDisconnect();
             return; // Exit the loop and close the socket
           // Add more cases as you implement other packet types
           default:
-            System.out.println("Unknown or unsupported control packet type: " + controlPacketType);
+            log.error("Unknown or unsupported control packet type: %s", controlPacketType);
             break;
         }
+        log.info("Remaining length: %s", remainingLength);
       }
     } catch (IOException e) {
-      System.err.println("IOException occurred: " + e.getMessage());
+      log.error("IOException occurred: %s", e.getMessage());
     } finally {
       try {
         socket.close();
@@ -62,10 +68,9 @@ public class ClientHandler extends Thread {
     }
   }
 
-  private void handleConnect(InputStream input, OutputStream output) throws IOException {
+  private void handleConnect(InputStream input, OutputStream output, int remainingLength)
+      throws IOException {
     // Skip remaining length byte(s)
-    int remainingLength = input.read();
-
     // Parse the CONNECT packet according to the MQTT protocol
     byte[] connectPacket = new byte[remainingLength];
     input.read(connectPacket);
@@ -85,10 +90,10 @@ public class ClientHandler extends Thread {
     log.info("%s:%s : CONNACK packet sent to client", inetAddress.toString(), port);
   }
 
-  private void handlePingreq(InputStream input, OutputStream output) throws IOException {
+  private void handlePingreq(OutputStream output, int remainingLength)
+      throws IOException {
     // PINGREQ is a fixed two-byte packet
-    int remainingLength = input.read(); // Should be 0x00 for PINGREQ
-    if (remainingLength != 0x00) {
+    if (remainingLength != 0x00) { // Should be 0x00 for PINGREQ
       log.error("%s:%s : Invalid PINGREQ packet received", inetAddress.toString(), port);
       return;
     }
@@ -112,10 +117,5 @@ public class ClientHandler extends Thread {
         inetAddress.toString(),
         port
     );
-  }
-
-  // @see https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Figure_2.2_-
-  private int getControlPacketType(int firstByte) {
-    return firstByte >> 4;
   }
 }
