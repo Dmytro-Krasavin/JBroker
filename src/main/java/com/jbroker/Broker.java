@@ -4,7 +4,9 @@ import com.jbroker.client.ClientHandlerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Broker {
 
   private final ClientHandlerFactory clientHandlerFactory;
@@ -15,7 +17,7 @@ public class Broker {
 
   public void run(int port) {
     try (ServerSocket serverSocket = new ServerSocket(port)) {
-      System.out.println("MQTT Broker is listening on port " + port);
+      log.info("MQTT Broker is listening on port {}", port);
 
       while (true) {
         Socket socket = serverSocket.accept();
@@ -23,7 +25,7 @@ public class Broker {
         clientHandlerFactory.createClientHandler(socket).start();
       }
     } catch (IOException e) {
-      System.err.println("IOException occurred: " + e.getMessage());
+      log.error("IOException occurred: {}", e.getMessage());
     }
   }
 }

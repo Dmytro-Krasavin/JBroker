@@ -2,7 +2,6 @@ package com.jbroker.packet.writer;
 
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
-import com.jbroker.logger.Logger;
 import com.jbroker.packet.ConnackPacket;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.PingRespPacket;
@@ -11,11 +10,12 @@ import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
 import java.io.IOException;
 import java.io.OutputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class PacketWriter {
 
-  private final Logger log = Logger.getInstance();
   private final ConnackPacketEncoder connackEncoder;
   private final PingRespPacketEncoder pingRespEncoder;
 
@@ -30,7 +30,7 @@ public class PacketWriter {
           "Could not find applicable packet decoder for command type: " + commandType.name());
     };
     sendPacket(output, encodedPacket, commandType);
-    log.info("%s packet sent to client", commandType.name());
+    log.info("{} packet sent to client", commandType.name());
   }
 
   private void sendPacket(OutputStream output, byte[] encodedPacket, CommandType commandType) {

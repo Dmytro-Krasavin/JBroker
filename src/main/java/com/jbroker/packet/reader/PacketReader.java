@@ -1,7 +1,6 @@
 package com.jbroker.packet.reader;
 
 import com.jbroker.command.CommandType;
-import com.jbroker.logger.Logger;
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
@@ -10,11 +9,12 @@ import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class PacketReader {
 
-  private final Logger log = Logger.getInstance();
   private final FixedHeaderReader fixedHeaderReader;
   private final ConnectPacketDecoder connectDecoder;
   private final PingReqPacketDecoder pingReqDecoder;
@@ -25,7 +25,7 @@ public class PacketReader {
     byte[] packetBuffer = buildPacketBuffer(input, fixedHeader.remainingLength());
 
     CommandType commandType = CommandType.resolveType(fixedHeader.controlPacketType());
-    log.info("%s packet received from client", commandType.name());
+    log.info("{} packet received from client", commandType.name());
 
     return switch (commandType) {
       case CONNECT -> connectDecoder.decode(fixedHeader, packetBuffer);

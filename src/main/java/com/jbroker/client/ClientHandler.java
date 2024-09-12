@@ -3,7 +3,6 @@ package com.jbroker.client;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
-import com.jbroker.logger.Logger;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
@@ -13,13 +12,14 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ClientHandler extends Thread {
 
   private final Socket socket;
   private final InetAddress inetAddress;
   private final int port;
-  private final Logger log;
   private final PacketReader packetReader;
   private final PacketWriter packetWriter;
   private final CommandDispatcher commandDispatcher;
@@ -32,7 +32,6 @@ public class ClientHandler extends Thread {
     this.socket = socket;
     this.inetAddress = socket.getInetAddress();
     this.port = socket.getPort();
-    this.log = Logger.getInstance();
     this.packetReader = packetReader;
     this.packetWriter = packetWriter;
     this.commandDispatcher = commandDispatcher;
@@ -40,7 +39,7 @@ public class ClientHandler extends Thread {
 
   @Override
   public void run() {
-    log.info("%s:%s: New socket connection", inetAddress.toString(), port);
+    log.info("{}:{}: New socket connection", inetAddress.toString(), port);
     try (InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream()) {
 
@@ -60,17 +59,17 @@ public class ClientHandler extends Thread {
         }
       }
     } catch (IOException e) {
-      log.error("IOException occurred: %s", e.getMessage());
+      log.error("IOException occurred: {}", e.getMessage());
     } catch (PacketSendFailedException e) {
-      log.error("Failed to send %s packet to client %s:%s. Reason: %s",
+      log.error("Failed to send {} packet to client {}:{}. Reason: {}",
           e.getMessage(), inetAddress.toString(), port, e.getCause().toString()
       );
     } finally {
       try {
-        log.info("%s:%s : Closing socket connection", inetAddress.toString(), port);
         socket.close();
+        log.info("{}:{}: Socket connection closed", inetAddress, port);
       } catch (IOException e) {
-        System.err.println("IOException occurred while closing socket: " + e.getMessage());
+        log.error("IOException occurred while closing socket: {}", e.getMessage());
       }
     }
   }
