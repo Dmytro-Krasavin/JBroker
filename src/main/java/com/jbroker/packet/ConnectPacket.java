@@ -1,12 +1,13 @@
 package com.jbroker.packet;
 
+import com.jbroker.command.CommandType;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class ConnectPacket extends MqttPacket {
 
-  // Constants for byte positions in the CONNECT packet
+  // Byte positions in the CONNECT packet (counting after Fixed Header bytes)
   public static final int PROTOCOL_NAME_START_POSITION = 1;
   public static final int PROTOCOL_NAME_LENGTH = 4; // "MQTT" = 4 bytes
   public static final int PROTOCOL_LEVEL_POSITION = 7;
@@ -15,7 +16,7 @@ public class ConnectPacket extends MqttPacket {
   public static final int KEEP_ALIVE_END_POSITION = 10;
   public static final int CLIENT_ID_START_POSITION = 11;
 
-  // Constants for flag bit positions
+  // Connect Flags bit positions
   public static final int USERNAME_FLAG_BIT = 7;
   public static final int PASSWORD_FLAG_BIT = 6;
   public static final int WILL_RETAIN_FLAG_BIT = 5;
@@ -31,7 +32,7 @@ public class ConnectPacket extends MqttPacket {
   private final boolean userNameFlag;                    // byte 8 (bit 7)
   private final boolean passwordFlag;                    // byte 8 (bit 6)
   private final boolean willRetain;                      // byte 8 (bit 5)
-  private final int willQoS;                             // byte 8 (bit 3-4)
+  private final int willQoS;                             // byte 8 (bit 4-3)
   private final boolean willFlag;                        // byte 8 (bit 2)
   private final boolean cleanSession;                    // byte 8 (bit 1)
   //    Reserved bit                                     // byte 8 (bit 0)
@@ -70,7 +71,7 @@ public class ConnectPacket extends MqttPacket {
       String willMessage,
       String userName,
       String password) {
-    super(fixedHeader);
+    super(CommandType.CONNECT, fixedHeader);
     this.protocolName = protocolName;
     this.protocolLevel = protocolLevel;
     this.userNameFlag = userNameFlag;
