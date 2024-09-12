@@ -25,6 +25,27 @@ public class ByteUtils {
     return (byte) (byteValue & ~mask);
   }
 
+  /**
+   * Combines the bits between startBitIndex and endBitIndex from the byte into an integer.
+   * <p>
+   * Example:
+   * <pre>
+   * byte byteValue = (byte) 0b10101100; // 172 in decimal
+   * int extractedBits = ByteUtils.extractBits(byteValue, 2, 4);
+   * // extractedBits will be 0b010 (binary) or 2 in decimal
+   * </pre>
+   *
+   * @param byteValue     The byte from which to extract the bits.
+   * @param startBitIndex The starting bit index (inclusive).
+   * @param endBitIndex   The ending bit index (inclusive).
+   * @return The integer value of the combined bits.
+   */
+  public static int combineBits(byte byteValue, int startBitIndex, int endBitIndex) {
+    int numberOfBits = endBitIndex - startBitIndex + 1;
+    // Shift the desired bits to the least significant bits (LSB)
+    return (byteValue >> startBitIndex) & ((1 << numberOfBits) - 1);
+  }
+
   public static int toUnsigned(byte value) {
     return value & 0xFF;
   }

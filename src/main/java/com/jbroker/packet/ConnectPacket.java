@@ -20,7 +20,8 @@ public class ConnectPacket extends MqttPacket {
   public static final int USERNAME_FLAG_BIT = 7;
   public static final int PASSWORD_FLAG_BIT = 6;
   public static final int WILL_RETAIN_FLAG_BIT = 5;
-  public static final int WILL_QOS_BITS = 0b00011000; // Bits 3-4 for QoS
+  public static final int WILL_QOS_END_BIT = 4;
+  public static final int WILL_QOS_START_BIT = 3;
   public static final int WILL_FLAG_BIT = 2;
   public static final int CLEAN_SESSION_FLAG_BIT = 1;
 

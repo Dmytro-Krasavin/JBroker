@@ -9,7 +9,8 @@ import static com.jbroker.packet.ConnectPacket.PASSWORD_FLAG_BIT;
 import static com.jbroker.packet.ConnectPacket.PROTOCOL_LEVEL_POSITION;
 import static com.jbroker.packet.ConnectPacket.USERNAME_FLAG_BIT;
 import static com.jbroker.packet.ConnectPacket.WILL_FLAG_BIT;
-import static com.jbroker.packet.ConnectPacket.WILL_QOS_BITS;
+import static com.jbroker.packet.ConnectPacket.WILL_QOS_END_BIT;
+import static com.jbroker.packet.ConnectPacket.WILL_QOS_START_BIT;
 import static com.jbroker.packet.ConnectPacket.WILL_RETAIN_FLAG_BIT;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketParseUtils.calculateStartBytePosition;
@@ -35,8 +36,9 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
         && userNameFlag; // See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html 3.1.2.9 Password Flag
     boolean willFlag = ByteUtils.isBitSet(connectFlags, WILL_FLAG_BIT);
     boolean willRetain = ByteUtils.isBitSet(connectFlags, WILL_RETAIN_FLAG_BIT) && willFlag;
-    // TODO: refactor willQoS parsing to improve readability
-    int willQoS = willFlag ? (connectFlags & WILL_QOS_BITS) >> 3 : 0; // QoS from bits 3-4
+    int willQoS = willFlag
+        ? ByteUtils.combineBits(connectFlags, WILL_QOS_START_BIT, WILL_QOS_END_BIT)
+        : 0;
     boolean cleanSession = ByteUtils.isBitSet(connectFlags, CLEAN_SESSION_FLAG_BIT);
 
     int keepAlive = readKeepAlive(packetBuffer);
