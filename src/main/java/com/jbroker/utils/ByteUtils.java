@@ -15,14 +15,14 @@ public class ByteUtils {
   }
 
   public static byte readByte(byte[] buffer, int bytePosition) {
-    return buffer[bytePositionToArrayIndex(bytePosition)];
+    return buffer[toArrayIndex(bytePosition)];
   }
 
   public static int readUnsignedByte(byte[] buffer, int bytePosition) {
-    return toUnsigned(buffer[bytePositionToArrayIndex(bytePosition)]);
+    return toUnsigned(buffer[toArrayIndex(bytePosition)]);
   }
 
-  public static int bytePositionToArrayIndex(int bytePosition) {
+  public static int toArrayIndex(int bytePosition) {
     return bytePosition - 1;
   }
 }

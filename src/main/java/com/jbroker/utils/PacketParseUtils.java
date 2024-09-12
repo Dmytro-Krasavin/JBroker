@@ -1,6 +1,6 @@
 package com.jbroker.utils;
 
-import static com.jbroker.utils.ByteUtils.bytePositionToArrayIndex;
+import static com.jbroker.utils.ByteUtils.toArrayIndex;
 import static com.jbroker.utils.ByteUtils.readUnsignedByte;
 import static com.jbroker.utils.ByteUtils.toUnsigned;
 
@@ -23,7 +23,7 @@ public class PacketParseUtils {
   public static String readStringField(byte[] packetBuffer, int startBytePosition) {
     int lengthMostSignificantByte = readUnsignedByte(packetBuffer, startBytePosition);
     int lengthLeastSignificantByte = readUnsignedByte(packetBuffer, startBytePosition + 1);
-    int startIndex = bytePositionToArrayIndex(startBytePosition);
+    int startIndex = toArrayIndex(startBytePosition);
     byte[] stringBytes = Arrays.copyOfRange(
         packetBuffer,
         startIndex + lengthMostSignificantByte + STRING_LENGTH_OFFSET,
