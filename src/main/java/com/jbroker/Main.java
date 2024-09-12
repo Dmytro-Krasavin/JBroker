@@ -1,5 +1,6 @@
 package com.jbroker;
 
+import com.jbroker.client.ClientHandlerFactory;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.handler.CommandHandlerFactory;
 import com.jbroker.command.handler.impl.ConnectHandler;

@@ -1,4 +1,4 @@
-package com.jbroker;
+package com.jbroker.client;
 
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.CommandType;
