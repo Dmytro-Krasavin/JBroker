@@ -21,7 +21,7 @@ import com.jbroker.packet.decoder.MqttPacketDecoder;
 import com.jbroker.utils.ByteUtils;
 import com.jbroker.utils.PacketParseUtils;
 
-public class ConnectPacketDecoder implements MqttPacketDecoder {
+public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
 
   @Override
   public ConnectPacket decode(FixedHeader fixedHeader, byte[] packetBuffer) {

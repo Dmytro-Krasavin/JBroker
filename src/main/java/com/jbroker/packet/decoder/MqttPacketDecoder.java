@@ -4,7 +4,7 @@ import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.MqttPacket;
 import java.io.IOException;
 
-public interface MqttPacketDecoder {
+public interface MqttPacketDecoder<InboundPacket extends MqttPacket> {
 
-  MqttPacket decode(FixedHeader fixedHeader, byte[] packetBuffer) throws IOException;
+  InboundPacket decode(FixedHeader fixedHeader, byte[] packetBuffer) throws IOException;
 }
