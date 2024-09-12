@@ -1,8 +1,10 @@
 package com.jbroker;
 
+import com.jbroker.command.CommandType;
 import com.jbroker.logger.Logger;
 import com.jbroker.packet.MqttPacket;
-import com.jbroker.parser.PacketParser;
+import com.jbroker.packet.PingReqPacket;
+import com.jbroker.packet.parser.PacketParserDispatcher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,14 +17,14 @@ public class ClientHandler extends Thread {
   private final InetAddress inetAddress;
   private final int port;
   private final Logger log;
-  private final PacketParser packetParser;
+  private final PacketParserDispatcher packetParserDispatcher;
 
-  public ClientHandler(Socket socket) {
+  public ClientHandler(Socket socket, PacketParserDispatcher packetParserDispatcher) {
     this.socket = socket;
     this.inetAddress = socket.getInetAddress();
     this.port = socket.getPort();
     this.log = Logger.getInstance();
-    this.packetParser = new PacketParser();
+    this.packetParserDispatcher = packetParserDispatcher;
   }
 
   @Override
@@ -37,25 +39,26 @@ public class ClientHandler extends Thread {
           continue;
         }
 
-        MqttPacket packet = packetParser.parse(input);
-        int controlPacketType = packet.fixedHeader().controlPacketType();
-        int remainingLength = packet.fixedHeader().remainingLength();
-        switch (controlPacketType) {
-          case 1: // CONNECT packet
-            handleConnect(input, output, remainingLength);
+        MqttPacket packet = packetParserDispatcher.parse(input);
+        // CommandDispatcher logic
+        CommandType commandType = CommandType.resolveType(
+            packet.getFixedHeader().controlPacketType()
+        );
+        switch (commandType) {
+          case CONNECT:
+            handleConnect(output);
             break;
-          case 12: // PINGREQ packet
-            handlePingreq(output, remainingLength);
+          case PINGREQ:
+            handlePingreq((PingReqPacket) packet, output);
             break;
-          case 14: // DISCONNECT packet
+          case DISCONNECT:
             handleDisconnect();
             return; // Exit the loop and close the socket
           // Add more cases as you implement other packet types
           default:
-            log.error("Unknown or unsupported control packet type: %s", controlPacketType);
+            log.error("Unsupported command type: %s", commandType);
             break;
         }
-        log.info("Remaining length: %s", remainingLength);
       }
     } catch (IOException e) {
       log.error("IOException occurred: %s", e.getMessage());
@@ -68,13 +71,8 @@ public class ClientHandler extends Thread {
     }
   }
 
-  private void handleConnect(InputStream input, OutputStream output, int remainingLength)
+  private void handleConnect(OutputStream output)
       throws IOException {
-    // Skip remaining length byte(s)
-    // Parse the CONNECT packet according to the MQTT protocol
-    byte[] connectPacket = new byte[remainingLength];
-    input.read(connectPacket);
-
     // Construct a simple CONNACK packet
     byte[] connackPacket = {
         (byte) 0x20, // CONNACK packet type
@@ -90,22 +88,22 @@ public class ClientHandler extends Thread {
     log.info("%s:%s : CONNACK packet sent to client", inetAddress.toString(), port);
   }
 
-  private void handlePingreq(OutputStream output, int remainingLength)
+  private void handlePingreq(PingReqPacket packet, OutputStream output)
       throws IOException {
     // PINGREQ is a fixed two-byte packet
-    if (remainingLength != 0x00) { // Should be 0x00 for PINGREQ
+    if (packet.getFixedHeader().remainingLength() != 0) {
       log.error("%s:%s : Invalid PINGREQ packet received", inetAddress.toString(), port);
       return;
     }
 
     // Construct the PINGRESP packet
-    byte[] pingrespPacket = {
+    byte[] pingRespPacket = {
         (byte) 0xD0, // PINGRESP packet type
         (byte) 0x00  // Remaining length
     };
 
     // Send the PINGRESP packet back to the client
-    output.write(pingrespPacket);
+    output.write(pingRespPacket);
     output.flush();
 
     log.info("%s:%s : PINGRESP packet sent to client", inetAddress.toString(), port);

@@ -4,20 +4,24 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class SimpleMqttBroker {
+public class Broker {
 
-  private static final int PORT = 1884; // Standard MQTT port
+  private final ClientHandlerFactory clientHandlerFactory;
 
-  public static void main(String[] args) {
-    try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-      System.out.println("MQTT Broker is listening on port " + PORT);
+  public Broker(ClientHandlerFactory clientHandlerFactory) {
+    this.clientHandlerFactory = clientHandlerFactory;
+  }
+
+  public void run(int port) {
+    try (ServerSocket serverSocket = new ServerSocket(port)) {
+      System.out.println("MQTT Broker is listening on port " + port);
 
       while (true) {
         Socket socket = serverSocket.accept();
         System.out.println("New client connected: " + socket.toString());
 
         // Handle client communication in a separate thread
-        new ClientHandler(socket).start();
+        clientHandlerFactory.createClientHandler(socket).start();
       }
     } catch (IOException e) {
       System.err.println("IOException occurred: " + e.getMessage());

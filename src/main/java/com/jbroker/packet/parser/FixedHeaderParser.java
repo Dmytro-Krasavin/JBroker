@@ -1,23 +1,22 @@
-package com.jbroker.parser;
+package com.jbroker.packet.parser;
 
 import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.MqttPacket;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PacketParser {
+public class FixedHeaderParser {
 
-  public MqttPacket parse(InputStream input) throws IOException {
+  public FixedHeader parse(InputStream input) throws IOException {
     int firstByte = input.read();
     int controlPacketType = readControlPacketType(firstByte);
     int remainingLength = readRemainingLength(input);
-    return new MqttPacket(new FixedHeader(controlPacketType, remainingLength));
+    return new FixedHeader(controlPacketType, remainingLength);
   }
 
   /**
    * @see <a
-   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718021">MQTT
-   * Control Packet type</a>
+   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718021">2.2.1
+   * MQTT Control Packet type</a>
    */
   private int readControlPacketType(int firstByte) {
     return firstByte >> 4;
@@ -25,8 +24,8 @@ public class PacketParser {
 
   /**
    * @see <a
-   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718023">Remaining
-   * Length</a>
+   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718023">2.2.3
+   * Remaining Length</a>
    */
   private int readRemainingLength(InputStream input) throws IOException {
     int multiplier = 1;
@@ -34,7 +33,7 @@ public class PacketParser {
     int encodedByte;
     do {
       encodedByte = input.read();
-      value += (encodedByte & 127) * multiplier;
+      value += (encodedByte & Byte.MAX_VALUE) * multiplier;
       multiplier *= 128;
       if (multiplier > 128 * 128 * 128) {
         throw new IOException("Malformed Remaining Length");
