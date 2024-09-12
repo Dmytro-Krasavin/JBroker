@@ -18,8 +18,6 @@ public class Broker {
 
       while (true) {
         Socket socket = serverSocket.accept();
-        System.out.println("New client connected: " + socket.toString());
-
         // Handle client communication in a separate thread
         clientHandlerFactory.createClientHandler(socket).start();
       }
