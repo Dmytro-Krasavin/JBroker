@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 public class ByteUtils {
 
   public static boolean isBitSet(byte byteValue, int position) {
-    return ((byteValue >> position) & 1) == 1;
+    return ((toUnsigned(byteValue) >> position) & 1) == 1;
   }
 
   public static byte modifyBit(byte byteValue, int bitPosition, boolean setBit) {
@@ -17,12 +17,13 @@ public class ByteUtils {
     // Create a mask with the bit at the specified position set to 1
     byte mask = (byte) (1 << bitPosition);
 
+    int unsignedByteValue = toUnsigned(byteValue);
     if (setBit) {
       // Set the bit using bitwise OR operation
-      return (byte) (byteValue | mask);
+      return (byte) (unsignedByteValue | mask);
     }
     // Clear the bit using bitwise AND operation with the inverse of the mask
-    return (byte) (byteValue & ~mask);
+    return (byte) (unsignedByteValue & ~mask);
   }
 
   /**

@@ -9,7 +9,7 @@ public class ConnackPacket extends MqttPacket {
   // CONNACK is a fixed four-byte packet (2 for fixed header and 2 for variable header)
   public static final byte CONNACK_REMAINING_LENGTH = 2;
 
-  // Byte positions of CONNECT packet (counting after Fixed Header bytes)
+  // Byte positions in the CONNECT packet (counting after Fixed Header bytes)
   public static final int CONNECT_ACKNOWLEDGE_FLAGS_POSITION = 1;
   public static final int RETURN_CODE_POSITION = 2;
 

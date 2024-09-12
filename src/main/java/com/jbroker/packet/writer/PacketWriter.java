@@ -21,7 +21,7 @@ public class PacketWriter {
 
   public void write(OutputStream output, MqttPacket outboundPacket) {
     CommandType commandType = CommandType.resolveType(
-        outboundPacket.getFixedHeader().controlPacketType()
+        outboundPacket.getFixedHeader().getControlPacketType()
     );
     byte[] encodedPacket = switch (commandType) {
       case CONNACK -> connackEncoder.encode((ConnackPacket) outboundPacket);

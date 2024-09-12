@@ -9,6 +9,7 @@ import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
+import com.jbroker.packet.decoder.impl.PublishPacketDecoder;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
 import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
@@ -28,6 +29,7 @@ public class Main {
                 new FixedHeaderReader(),
                 new ConnectPacketDecoder(),
                 new PingReqPacketDecoder(),
+                new PublishPacketDecoder(),
                 new DisconnectPacketDecoder()
             ),
             new PacketWriter(

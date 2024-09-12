@@ -14,7 +14,7 @@ public class PingReqHandler implements CommandHandler<PingReqPacket, PingRespPac
 
   @Override
   public Optional<PingRespPacket> handleCommand(PingReqPacket packet) {
-    if (packet.getFixedHeader().remainingLength() != PINGREQ_REMAINING_LENGTH) {
+    if (packet.getFixedHeader().getRemainingLength() != PINGREQ_REMAINING_LENGTH) {
       throw new IllegalArgumentException("Invalid PINGREQ packet received");
     }
     return Optional.of(new PingRespPacket(
