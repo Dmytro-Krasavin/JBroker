@@ -1,7 +1,7 @@
 package com.jbroker.utils;
 
-import static com.jbroker.utils.ByteUtils.toArrayIndex;
 import static com.jbroker.utils.ByteUtils.readUnsignedByte;
+import static com.jbroker.utils.ByteUtils.toArrayIndex;
 import static com.jbroker.utils.ByteUtils.toUnsigned;
 
 import com.jbroker.packet.MqttPacket;
@@ -29,6 +29,21 @@ public class PacketParseUtils {
         startIndex + lengthMostSignificantByte + STRING_LENGTH_OFFSET,
         startIndex + lengthLeastSignificantByte + STRING_LENGTH_OFFSET
     );
+    return new String(stringBytes, MqttPacket.TEXT_FIELD_ENCODING);
+  }
+
+  /**
+   * @see <a
+   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718040">3.3.3
+   * Payload</a>
+   */
+  public static String readApplicationMessage(
+      byte[] packetBuffer,
+      int startBytePosition,
+      int remainingLength) {
+    int startIndex = toArrayIndex(startBytePosition);
+    int endIndex = toArrayIndex(remainingLength);
+    byte[] stringBytes = Arrays.copyOfRange(packetBuffer, startIndex, endIndex);
     return new String(stringBytes, MqttPacket.TEXT_FIELD_ENCODING);
   }
 
