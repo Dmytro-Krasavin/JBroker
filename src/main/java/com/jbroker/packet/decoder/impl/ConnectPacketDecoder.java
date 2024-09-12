@@ -1,4 +1,4 @@
-package com.jbroker.packet.parser;
+package com.jbroker.packet.decoder.impl;
 
 import static com.jbroker.packet.ConnectPacket.CLEAN_SESSION_FLAG_BIT;
 import static com.jbroker.packet.ConnectPacket.CLIENT_ID_START_POSITION;
@@ -17,19 +17,18 @@ import static com.jbroker.utils.PacketParseUtils.readStringField;
 
 import com.jbroker.packet.ConnectPacket;
 import com.jbroker.packet.FixedHeader;
+import com.jbroker.packet.decoder.MqttPacketDecoder;
 import com.jbroker.utils.ByteUtils;
 import com.jbroker.utils.PacketParseUtils;
 
-public class ConnectParser {
+public class ConnectPacketDecoder implements MqttPacketDecoder {
 
-  public ConnectPacket parse(FixedHeader fixedHeader, byte[] packetBuffer) {
-    // Parse Protocol Name
+  @Override
+  public ConnectPacket decode(FixedHeader fixedHeader, byte[] packetBuffer) {
     String protocolName = readProtocolName(packetBuffer);
-
-    // Parse Protocol Level
     byte protocolLevel = readByte(packetBuffer, PROTOCOL_LEVEL_POSITION);
 
-    // Parse Connect Flags
+    // Read Connect Flags
     byte connectFlags = readByte(packetBuffer, CONNECT_FLAGS_POSITION);
     boolean userNameFlag = ByteUtils.isBitSet(connectFlags, USERNAME_FLAG_BIT);
     boolean passwordFlag = ByteUtils.isBitSet(connectFlags, PASSWORD_FLAG_BIT)
@@ -40,13 +39,11 @@ public class ConnectParser {
     int willQoS = willFlag ? (connectFlags & WILL_QOS_BITS) >> 3 : 0; // QoS from bits 3-4
     boolean cleanSession = ByteUtils.isBitSet(connectFlags, CLEAN_SESSION_FLAG_BIT);
 
-    // Parse Keep Alive
     int keepAlive = readKeepAlive(packetBuffer);
 
-    // Parse Client ID
     String clientId = readClientId(packetBuffer);
 
-    // Parse Optional Fields (willTopic, willMessage, userName, password)
+    // Read Optional Fields (willTopic, willMessage, userName, password)
     String willTopic = willFlag
         ? readWillTopic(packetBuffer, clientId)
         : null;

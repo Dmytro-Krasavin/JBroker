@@ -1,10 +1,10 @@
 package com.jbroker;
 
-import com.jbroker.packet.parser.ConnectParser;
-import com.jbroker.packet.parser.DisconnectParser;
-import com.jbroker.packet.parser.FixedHeaderParser;
-import com.jbroker.packet.parser.PacketParserDispatcher;
-import com.jbroker.packet.parser.PingReqParser;
+import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
+import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
+import com.jbroker.packet.reader.FixedHeaderReader;
+import com.jbroker.packet.reader.PacketReader;
+import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
 
 public class Main {
 
@@ -13,11 +13,11 @@ public class Main {
   public static void main(String[] args) {
     Broker broker = new Broker(
         new ClientHandlerFactory(
-            new PacketParserDispatcher(
-                new FixedHeaderParser(),
-                new ConnectParser(),
-                new PingReqParser(),
-                new DisconnectParser()
+            new PacketReader(
+                new FixedHeaderReader(),
+                new ConnectPacketDecoder(),
+                new PingReqPacketDecoder(),
+                new DisconnectPacketDecoder()
             )
         )
     );

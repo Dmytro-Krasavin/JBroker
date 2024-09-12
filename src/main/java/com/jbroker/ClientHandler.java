@@ -4,7 +4,7 @@ import com.jbroker.command.CommandType;
 import com.jbroker.logger.Logger;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.PingReqPacket;
-import com.jbroker.packet.parser.PacketParserDispatcher;
+import com.jbroker.packet.reader.PacketReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,14 +17,14 @@ public class ClientHandler extends Thread {
   private final InetAddress inetAddress;
   private final int port;
   private final Logger log;
-  private final PacketParserDispatcher packetParserDispatcher;
+  private final PacketReader packetReader;
 
-  public ClientHandler(Socket socket, PacketParserDispatcher packetParserDispatcher) {
+  public ClientHandler(Socket socket, PacketReader packetReader) {
     this.socket = socket;
     this.inetAddress = socket.getInetAddress();
     this.port = socket.getPort();
     this.log = Logger.getInstance();
-    this.packetParserDispatcher = packetParserDispatcher;
+    this.packetReader = packetReader;
   }
 
   @Override
@@ -39,7 +39,7 @@ public class ClientHandler extends Thread {
           continue;
         }
 
-        MqttPacket packet = packetParserDispatcher.parse(input);
+        MqttPacket packet = packetReader.read(input);
         // CommandDispatcher logic
         CommandType commandType = CommandType.resolveType(
             packet.getFixedHeader().controlPacketType()

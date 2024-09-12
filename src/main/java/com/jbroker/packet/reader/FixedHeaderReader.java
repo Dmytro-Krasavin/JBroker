@@ -1,12 +1,12 @@
-package com.jbroker.packet.parser;
+package com.jbroker.packet.reader;
 
 import com.jbroker.packet.FixedHeader;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FixedHeaderParser {
+public class FixedHeaderReader {
 
-  public FixedHeader parse(InputStream input) throws IOException {
+  public FixedHeader read(InputStream input) throws IOException {
     int firstByte = input.read();
     int controlPacketType = readControlPacketType(firstByte);
     int remainingLength = readRemainingLength(input);
