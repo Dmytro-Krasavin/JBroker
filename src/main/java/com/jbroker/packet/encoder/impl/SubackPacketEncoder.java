@@ -1,6 +1,6 @@
 package com.jbroker.packet.encoder.impl;
 
-import static com.jbroker.utils.PacketParseUtils.encodePacketIdentifier;
+import static com.jbroker.utils.PacketEncodeUtils.encodePacketIdentifier;
 
 import com.jbroker.packet.SubackPacket;
 import com.jbroker.packet.SubackPacket.SubackReturnCode;

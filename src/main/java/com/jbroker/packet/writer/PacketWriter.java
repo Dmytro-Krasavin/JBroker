@@ -6,9 +6,11 @@ import com.jbroker.packet.ConnackPacket;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.PingRespPacket;
 import com.jbroker.packet.SubackPacket;
+import com.jbroker.packet.UnsubackPacket;
 import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
 import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
 import com.jbroker.packet.encoder.impl.SubackPacketEncoder;
+import com.jbroker.packet.encoder.impl.UnsubackPacketEncoder;
 import java.io.IOException;
 import java.io.OutputStream;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class PacketWriter {
   private final ConnackPacketEncoder connackEncoder;
   private final PingRespPacketEncoder pingRespEncoder;
   private final SubackPacketEncoder subackEncoder;
+  private final UnsubackPacketEncoder unsubackEncoder;
 
   public void write(OutputStream output, MqttPacket outboundPacket) {
     CommandType commandType = outboundPacket.getFixedHeader().getCommandType();
@@ -28,6 +31,7 @@ public class PacketWriter {
       case CONNACK -> connackEncoder.encode((ConnackPacket) outboundPacket);
       case PINGRESP -> pingRespEncoder.encode((PingRespPacket) outboundPacket);
       case SUBACK -> subackEncoder.encode((SubackPacket) outboundPacket);
+      case UNSUBACK -> unsubackEncoder.encode((UnsubackPacket) outboundPacket);
       default -> throw new IllegalArgumentException(
           "Could not find applicable packet decoder for command type: " + commandType.name());
     };

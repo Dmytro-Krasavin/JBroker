@@ -13,14 +13,14 @@ import static com.jbroker.packet.ConnectPacket.WILL_QOS_END_BIT;
 import static com.jbroker.packet.ConnectPacket.WILL_QOS_START_BIT;
 import static com.jbroker.packet.ConnectPacket.WILL_RETAIN_FLAG_BIT;
 import static com.jbroker.utils.ByteUtils.readByte;
-import static com.jbroker.utils.PacketParseUtils.calculateStartBytePosition;
-import static com.jbroker.utils.PacketParseUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
+import static com.jbroker.utils.PacketDecodeUtils.combineBytesToInt;
+import static com.jbroker.utils.PacketDecodeUtils.readStringField;
 
 import com.jbroker.packet.ConnectPacket;
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import com.jbroker.utils.ByteUtils;
-import com.jbroker.utils.PacketParseUtils;
 
 public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
 
@@ -85,7 +85,7 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
   private int readKeepAlive(byte[] packetBuffer) {
     byte keepAliveMSB = readByte(packetBuffer, KEEP_ALIVE_START_POSITION);
     byte keepAliveLSB = readByte(packetBuffer, KEEP_ALIVE_END_POSITION);
-    return PacketParseUtils.combineBytesToInt(keepAliveMSB, keepAliveLSB);
+    return combineBytesToInt(keepAliveMSB, keepAliveLSB);
   }
 
   private String readClientId(byte[] packetBuffer) {

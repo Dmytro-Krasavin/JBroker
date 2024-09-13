@@ -8,6 +8,7 @@ import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
 import com.jbroker.packet.decoder.impl.PublishPacketDecoder;
 import com.jbroker.packet.decoder.impl.SubscribePacketDecoder;
+import com.jbroker.packet.decoder.impl.UnsubscribePacketDecoder;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PacketReader {
   private final PingReqPacketDecoder pingReqDecoder;
   private final PublishPacketDecoder publishDecoder;
   private final SubscribePacketDecoder subscribeDecoder;
+  private final UnsubscribePacketDecoder unsubscribeDecoder;
   private final DisconnectPacketDecoder disconnectDecoder;
 
   public MqttPacket read(int firstByte, InputStream input) throws IOException {
@@ -36,6 +38,7 @@ public class PacketReader {
       case PINGREQ -> pingReqDecoder.decode(fixedHeader, packetBuffer);
       case PUBLISH -> publishDecoder.decode(fixedHeader, packetBuffer);
       case SUBSCRIBE -> subscribeDecoder.decode(fixedHeader, packetBuffer);
+      case UNSUBSCRIBE -> unsubscribeDecoder.decode(fixedHeader, packetBuffer);
       case DISCONNECT -> disconnectDecoder.decode(fixedHeader, packetBuffer);
       default -> throw new IllegalArgumentException(
           "Could not find applicable packet encoder for command type: " + commandType.name());

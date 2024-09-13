@@ -1,18 +1,18 @@
 package com.jbroker.packet.decoder.impl;
 
 import static com.jbroker.packet.SubscribePacket.PACKET_IDENTIFIER_END_POSITION;
-import static com.jbroker.packet.SubscribePacket.PACKET_IDENTIFIER_START_POSITION;
 import static com.jbroker.packet.SubscribePacket.REQUESTED_QOS_END_BIT;
 import static com.jbroker.packet.SubscribePacket.REQUESTED_QOS_START_BIT;
 import static com.jbroker.utils.ByteUtils.combineBits;
 import static com.jbroker.utils.ByteUtils.readByte;
-import static com.jbroker.utils.PacketParseUtils.calculateStartBytePosition;
-import static com.jbroker.utils.PacketParseUtils.combineBytesToInt;
-import static com.jbroker.utils.PacketParseUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
+import static com.jbroker.utils.PacketDecodeUtils.decodePacketIdentifier;
+import static com.jbroker.utils.PacketDecodeUtils.readStringField;
 
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.QosLevel;
 import com.jbroker.packet.SubscribePacket;
+import com.jbroker.packet.UnsubscribePacket;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,9 +32,7 @@ public class SubscribePacketDecoder implements MqttPacketDecoder<SubscribePacket
    * 3.8.2 Variable header</a>
    */
   private int readPacketIdentifier(byte[] packetBuffer) {
-    byte packetIdentifierMSB = readByte(packetBuffer, PACKET_IDENTIFIER_START_POSITION);
-    byte packetIdentifierLSB = readByte(packetBuffer, PACKET_IDENTIFIER_END_POSITION);
-    return combineBytesToInt(packetIdentifierMSB, packetIdentifierLSB);
+    return decodePacketIdentifier(packetBuffer, UnsubscribePacket.PACKET_IDENTIFIER_START_POSITION);
   }
 
   /**
@@ -45,7 +43,6 @@ public class SubscribePacketDecoder implements MqttPacketDecoder<SubscribePacket
   private static Map<QosLevel, String> readTopicsByRequestedQos(byte[] packetBuffer) {
     Map<QosLevel, String> topicsByQoS = new LinkedHashMap<>();
     int currentPosition = PACKET_IDENTIFIER_END_POSITION + 1;
-
     while (currentPosition < packetBuffer.length) {
       String topicFilter = readStringField(packetBuffer, currentPosition);
 

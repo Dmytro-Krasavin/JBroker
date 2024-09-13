@@ -4,16 +4,16 @@ import static com.jbroker.packet.PublishPacket.PACKET_IDENTIFIER_LENGTH;
 import static com.jbroker.packet.PublishPacket.TOPIC_NAME_START_POSITION;
 import static com.jbroker.packet.QosLevel.QOS_0;
 import static com.jbroker.utils.ByteUtils.readByte;
-import static com.jbroker.utils.PacketParseUtils.calculateStartBytePosition;
-import static com.jbroker.utils.PacketParseUtils.combineBytesToInt;
-import static com.jbroker.utils.PacketParseUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
+import static com.jbroker.utils.PacketDecodeUtils.combineBytesToInt;
+import static com.jbroker.utils.PacketDecodeUtils.readStringField;
 
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.PublishFixedHeader;
 import com.jbroker.packet.PublishPacket;
 import com.jbroker.packet.QosLevel;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
-import com.jbroker.utils.PacketParseUtils;
+import com.jbroker.utils.PacketDecodeUtils;
 
 public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
 
@@ -84,7 +84,7 @@ public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
     if (packetIdentifier != null) {
       applicationMessageStartBytePosition += PACKET_IDENTIFIER_LENGTH;
     }
-    return PacketParseUtils.readApplicationMessage(
+    return PacketDecodeUtils.readApplicationMessage(
         packetBuffer,
         applicationMessageStartBytePosition,
         remainingLength

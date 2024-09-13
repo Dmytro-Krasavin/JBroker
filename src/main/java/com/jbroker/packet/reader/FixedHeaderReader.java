@@ -5,6 +5,7 @@ import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_END_BIT;
 import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_START_BIT;
 import static com.jbroker.packet.PublishFixedHeader.RETAIN_FLAG_BIT;
 import static com.jbroker.packet.SubscribePacket.SUBSCRIBE_FIXED_HEADER_BYTE;
+import static com.jbroker.packet.UnsubscribePacket.UNSUBSCRIBE_FIXED_HEADER_BYTE;
 
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.MalformedPacketException;
@@ -26,6 +27,9 @@ public class FixedHeaderReader {
     }
     if (controlPacketType == CommandType.SUBSCRIBE.getValue()) {
       validateSubscribeFixedHeader(firstByte);
+    }
+    if (controlPacketType == CommandType.UNSUBSCRIBE.getValue()) {
+      validateUnsubscribeFixedHeader(firstByte);
     }
 
     return new FixedHeader(controlPacketType, remainingLength);
@@ -120,12 +124,32 @@ public class FixedHeaderReader {
    * SUBSCRIBE Fixed header</a>
    */
   private void validateSubscribeFixedHeader(int firstByte) {
-    if (firstByte != SUBSCRIBE_FIXED_HEADER_BYTE) {
+    validateFixedHeader(firstByte, SUBSCRIBE_FIXED_HEADER_BYTE, CommandType.SUBSCRIBE);
+  }
+
+  /**
+   * From MQTT specification: <i>Bits 3,2,1 and 0 of the fixed header of the UNSUBSCRIBE Control
+   * Packet are reserved and MUST be set to 0,0,1 and 0 respectively. The Server MUST treat any
+   * other value as malformed and close the Network Connection</i>
+   *
+   * @see <a
+   * href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718073">3.10.1
+   * UNSUBSCRIBE Fixed header</a>
+   */
+  private void validateUnsubscribeFixedHeader(int firstByte) {
+    validateFixedHeader(firstByte, UNSUBSCRIBE_FIXED_HEADER_BYTE, CommandType.UNSUBSCRIBE);
+  }
+
+  private static void validateFixedHeader(
+      int actualFixedHeaderByte,
+      int expectedFixedHeaderByte,
+      CommandType commandType) {
+    if (actualFixedHeaderByte != expectedFixedHeaderByte) {
       throw new MalformedPacketException(
-          CommandType.SUBSCRIBE,
+          commandType,
           String.format(
-              "Malformed SUBSCRIBE Fixed Header. Expected 0x%x but received 0x%x",
-              SUBSCRIBE_FIXED_HEADER_BYTE, firstByte
+              "Malformed %s Fixed Header. Expected 0x%x but received 0x%x",
+              commandType.name(), expectedFixedHeaderByte, actualFixedHeaderByte
           )
       );
     }

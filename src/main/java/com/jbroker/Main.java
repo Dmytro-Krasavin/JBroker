@@ -8,15 +8,18 @@ import com.jbroker.command.handler.impl.DisconnectHandler;
 import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
+import com.jbroker.command.handler.impl.UnsubscribeHandler;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
 import com.jbroker.packet.decoder.impl.PublishPacketDecoder;
 import com.jbroker.packet.decoder.impl.SubscribePacketDecoder;
+import com.jbroker.packet.decoder.impl.UnsubscribePacketDecoder;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
 import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
 import com.jbroker.packet.encoder.impl.SubackPacketEncoder;
+import com.jbroker.packet.encoder.impl.UnsubackPacketEncoder;
 import com.jbroker.packet.reader.FixedHeaderReader;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
@@ -35,12 +38,14 @@ public class Main {
                 new PingReqPacketDecoder(),
                 new PublishPacketDecoder(),
                 new SubscribePacketDecoder(),
+                new UnsubscribePacketDecoder(),
                 new DisconnectPacketDecoder()
             ),
             new PacketWriter(
                 new ConnackPacketEncoder(fixedHeaderEncoder),
                 new PingRespPacketEncoder(fixedHeaderEncoder),
-                new SubackPacketEncoder(fixedHeaderEncoder)
+                new SubackPacketEncoder(fixedHeaderEncoder),
+                new UnsubackPacketEncoder(fixedHeaderEncoder)
             ),
             new CommandDispatcher(
                 new CommandHandlerFactory(
@@ -48,6 +53,7 @@ public class Main {
                     new PingReqHandler(),
                     new PublishHandler(),
                     new SubscribeHandler(),
+                    new UnsubscribeHandler(),
                     new DisconnectHandler()
                 )
             )
