@@ -5,7 +5,6 @@ import static com.jbroker.packet.ConnackPacket.CONNECT_ACKNOWLEDGE_FLAGS_POSITIO
 import static com.jbroker.packet.ConnackPacket.RETURN_CODE_POSITION;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
 
-import com.jbroker.command.CommandType;
 import com.jbroker.packet.ConnackPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
@@ -21,7 +20,7 @@ public class ConnackPacketEncoder implements MqttPacketEncoder<ConnackPacket> {
   @Override
   public byte[] encode(ConnackPacket outboundPacket) {
     byte[] encodedFixedHeader = fixedHeaderEncoder.encode(
-        CommandType.CONNACK,
+        outboundPacket.getFixedHeader().getCommandType(),
         ConnackPacket.CONNACK_REMAINING_LENGTH
     );
 

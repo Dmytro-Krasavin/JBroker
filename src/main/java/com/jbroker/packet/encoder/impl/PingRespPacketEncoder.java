@@ -1,6 +1,5 @@
 package com.jbroker.packet.encoder.impl;
 
-import com.jbroker.command.CommandType;
 import com.jbroker.packet.PingRespPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
@@ -14,7 +13,7 @@ public class PingRespPacketEncoder implements MqttPacketEncoder<PingRespPacket> 
   @Override
   public byte[] encode(PingRespPacket outboundPacket) {
     return fixedHeaderEncoder.encode(
-        CommandType.PINGREQ,
+        outboundPacket.getFixedHeader().getCommandType(),
         PingRespPacket.PINGRESP_REMAINING_LENGTH
     );
   }
