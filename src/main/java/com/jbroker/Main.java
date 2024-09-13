@@ -6,6 +6,7 @@ import com.jbroker.command.handler.CommandHandlerFactory;
 import com.jbroker.command.handler.impl.ConnectHandler;
 import com.jbroker.command.handler.impl.DisconnectHandler;
 import com.jbroker.command.handler.impl.PingReqHandler;
+import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -40,6 +41,7 @@ public class Main {
                 new CommandHandlerFactory(
                     new ConnectHandler(),
                     new PingReqHandler(),
+                    new PublishHandler(),
                     new DisconnectHandler()
                 )
             )

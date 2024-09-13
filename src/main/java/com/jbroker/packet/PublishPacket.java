@@ -27,4 +27,8 @@ public class PublishPacket extends MqttPacket {
     this.packetIdentifier = packetIdentifier;
     this.applicationMessage = applicationMessage;
   }
+
+  public PublishFixedHeader getFixedHeader() {
+    return ((PublishFixedHeader) super.getFixedHeader());
+  }
 }
