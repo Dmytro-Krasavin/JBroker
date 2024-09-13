@@ -10,8 +10,7 @@ public class UnknownCommandHandler implements CommandHandler<MqttPacket, MqttPac
 
   @Override
   public Optional<MqttPacket> handleCommand(MqttPacket inboundPacket, String clientId) {
-    log.error("Unknown command received! Command type: {}",
-        inboundPacket.getFixedHeader().getCommandType());
+    log.error("Unknown command received! Command type: {}", inboundPacket.getCommandType());
     return Optional.empty();
   }
 }

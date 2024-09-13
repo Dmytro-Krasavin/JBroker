@@ -60,8 +60,7 @@ public class ClientConnection extends Thread {
   }
 
   public void sentPacket(MqttPacket outboundPacket) {
-    log.info("Sending {} packet to client '{}'",
-        outboundPacket.getFixedHeader().getCommandType(), clientId);
+    log.info("Sending {} packet to client '{}'", outboundPacket.getFixedHeader(), clientId);
     packetWriter.write(outputStream, outboundPacket);
   }
 
@@ -109,6 +108,6 @@ public class ClientConnection extends Thread {
   }
 
   private static boolean didClientCloseMqttConnection(MqttPacket inboundPacket) {
-    return inboundPacket.getFixedHeader().getCommandType() == CommandType.DISCONNECT;
+    return inboundPacket.getCommandType() == CommandType.DISCONNECT;
   }
 }

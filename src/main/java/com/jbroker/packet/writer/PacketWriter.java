@@ -29,7 +29,7 @@ public class PacketWriter {
   private final PublishPacketEncoder publishEncoder;
 
   public void write(OutputStream outputStream, MqttPacket outboundPacket) {
-    CommandType commandType = outboundPacket.getFixedHeader().getCommandType();
+    CommandType commandType = outboundPacket.getCommandType();
     byte[] encodedPacket = switch (commandType) {
       case CONNACK -> connackEncoder.encode((ConnackPacket) outboundPacket);
       case PINGRESP -> pingRespEncoder.encode((PingRespPacket) outboundPacket);
