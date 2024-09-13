@@ -15,10 +15,9 @@ public class CommandDispatcher {
 
   public <InboundPacket extends MqttPacket, OutboundPacket extends MqttPacket> Optional<OutboundPacket> dispatchCommand(
       InboundPacket inboundPacket, String clientId) {
-    // TODO: fix this generic stuff
-    CommandHandler<InboundPacket, OutboundPacket> commandHandler =
-        (CommandHandler<InboundPacket, OutboundPacket>) commandHandlerFactory.getCommandHandler(
-            inboundPacket.getFixedHeader().getCommandType());
+    CommandHandler<InboundPacket, OutboundPacket> commandHandler = commandHandlerFactory.getCommandHandler(
+        inboundPacket.getFixedHeader().getCommandType()
+    );
     log.info("{}: executing {} command", clientId, inboundPacket.getFixedHeader().getCommandType());
     return commandHandler.handleCommand(inboundPacket, clientId);
   }

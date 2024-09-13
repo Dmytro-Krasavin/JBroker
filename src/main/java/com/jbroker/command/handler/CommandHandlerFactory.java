@@ -22,7 +22,7 @@ import java.util.Map;
 public class CommandHandlerFactory {
 
   private final Map<CommandType, CommandHandler<? extends MqttPacket, ? extends MqttPacket>> commandHandlerByCommandType;
-  private final CommandHandler<? extends MqttPacket, ? extends MqttPacket> defaultHandler = new UnknownCommandHandler();
+  private final CommandHandler<MqttPacket, MqttPacket> defaultHandler = new UnknownCommandHandler();
 
   private final ConnectHandler connectHandler;
   private final PingReqHandler pingReqHandler;
@@ -48,9 +48,12 @@ public class CommandHandlerFactory {
     initializeMap();
   }
 
-  public CommandHandler<? extends MqttPacket, ? extends MqttPacket> getCommandHandler(
+  @SuppressWarnings("unchecked")
+  public <InboundPacket extends MqttPacket, OutboundPacket extends MqttPacket> CommandHandler<InboundPacket, OutboundPacket> getCommandHandler(
       CommandType type) {
-    return commandHandlerByCommandType.getOrDefault(type, defaultHandler);
+    return (CommandHandler<InboundPacket, OutboundPacket>) commandHandlerByCommandType.getOrDefault(
+        type, defaultHandler
+    );
   }
 
   private void initializeMap() {
