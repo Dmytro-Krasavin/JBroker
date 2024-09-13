@@ -5,14 +5,15 @@ import static com.jbroker.packet.FixedHeader.REMAINING_LENGTH_START_POSITION;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
 
 import com.jbroker.command.CommandType;
+import com.jbroker.packet.FixedHeader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FixedHeaderEncoder {
 
-  public byte[] encode(CommandType commandType, int remainingLength) {
-    byte controlPacketType = encodeControlPacketType(commandType);
-    List<Byte> remainingLengthBytes = encodeRemainingLength(remainingLength);
+  public byte[] encode(FixedHeader fixedHeader) {
+    byte controlPacketType = encodeControlPacketType(fixedHeader.getCommandType());
+    List<Byte> remainingLengthBytes = encodeRemainingLength(fixedHeader.getRemainingLength());
 
     List<Byte> fixedHeaderBytes = new ArrayList<>();
     fixedHeaderBytes.add(toArrayIndex(CONTROL_PACKET_TYPE_POSITION), controlPacketType);

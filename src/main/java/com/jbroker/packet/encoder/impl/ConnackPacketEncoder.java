@@ -19,10 +19,7 @@ public class ConnackPacketEncoder implements MqttPacketEncoder<ConnackPacket> {
 
   @Override
   public byte[] encode(ConnackPacket outboundPacket) {
-    byte[] encodedFixedHeader = fixedHeaderEncoder.encode(
-        outboundPacket.getFixedHeader().getCommandType(),
-        ConnackPacket.CONNACK_REMAINING_LENGTH
-    );
+    byte[] encodedFixedHeader = fixedHeaderEncoder.encode(outboundPacket.getFixedHeader());
 
     byte[] encodedVariableHeader = new byte[CONNACK_REMAINING_LENGTH];
     byte connectAcknowledgeFlags = ByteUtils.modifyBit(

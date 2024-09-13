@@ -12,9 +12,6 @@ public class PingRespPacketEncoder implements MqttPacketEncoder<PingRespPacket> 
 
   @Override
   public byte[] encode(PingRespPacket outboundPacket) {
-    return fixedHeaderEncoder.encode(
-        outboundPacket.getFixedHeader().getCommandType(),
-        PingRespPacket.PINGRESP_REMAINING_LENGTH
-    );
+    return fixedHeaderEncoder.encode(outboundPacket.getFixedHeader());
   }
 }
