@@ -15,6 +15,10 @@ public class ClientConnectionRegistry {
     clientConnectionBySocketAddressMap.put(socketAddress, clientConnection);
   }
 
+  public void removeClientConnection(SocketAddress socketAddress) {
+    clientConnectionBySocketAddressMap.remove(socketAddress);
+  }
+
   public void sendPacket(String clientId, MqttPacket outboundPacket) {
     clientConnectionBySocketAddressMap.values().stream()
         .filter(clientConnection -> Objects.nonNull(clientConnection.getClientId()))

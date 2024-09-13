@@ -25,6 +25,7 @@ public class ClientConnection extends Thread {
   private final PacketReader packetReader;
   private final PacketWriter packetWriter;
   private final CommandDispatcher commandDispatcher;
+  private final Runnable onCloseConnectionCallback;
 
   @Getter
   private String clientId;
@@ -33,12 +34,14 @@ public class ClientConnection extends Thread {
       Socket socket,
       PacketReader packetReader,
       PacketWriter packetWriter,
-      CommandDispatcher commandDispatcher) throws IOException {
+      CommandDispatcher commandDispatcher,
+      Runnable onCloseConnectionCallback) throws IOException {
     this.socket = socket;
     this.outputStream = socket.getOutputStream();
     this.packetReader = packetReader;
     this.packetWriter = packetWriter;
     this.commandDispatcher = commandDispatcher;
+    this.onCloseConnectionCallback = onCloseConnectionCallback;
   }
 
   @SuppressWarnings("StatementWithEmptyBody")
@@ -60,7 +63,7 @@ public class ClientConnection extends Thread {
   }
 
   public void sentPacket(MqttPacket outboundPacket) {
-    log.info("Sending {} packet to client '{}'", outboundPacket.getFixedHeader(), clientId);
+    log.info("Sending {} packet to client '{}'", outboundPacket.getCommandType(), clientId);
     packetWriter.write(outputStream, outboundPacket);
   }
 
@@ -101,6 +104,7 @@ public class ClientConnection extends Thread {
     } catch (IOException e) {
       log.error("IOException occurred while closing socket: {}", e.getMessage());
     }
+    onCloseConnectionCallback.run();
   }
 
   private boolean didClientCloseSocketConnection(int firstByte) {

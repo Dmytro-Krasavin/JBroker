@@ -5,6 +5,7 @@ import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketAddress;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,16 +17,19 @@ public class ClientConnectionManager {
   private final ClientConnectionRegistry clientConnectionRegistry;
 
   public ClientConnection createClientConnection(Socket clientSocket) throws IOException {
+    SocketAddress clientSocketAddress = clientSocket.getRemoteSocketAddress();
     ClientConnection clientConnection = new ClientConnection(
         clientSocket,
         packetReader,
         packetWriter,
-        commandDispatcher
+        commandDispatcher,
+        onCloseConnectionCallback(clientSocketAddress)
     );
-    clientConnectionRegistry.addClientConnection(
-        clientSocket.getRemoteSocketAddress(),
-        clientConnection
-    );
+    clientConnectionRegistry.addClientConnection(clientSocketAddress, clientConnection);
     return clientConnection;
+  }
+
+  private Runnable onCloseConnectionCallback(SocketAddress clientSocketAddress) {
+    return () -> clientConnectionRegistry.removeClientConnection(clientSocketAddress);
   }
 }

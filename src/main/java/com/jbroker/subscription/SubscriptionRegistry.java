@@ -2,24 +2,26 @@ package com.jbroker.subscription;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class SubscriptionRegistry {
 
-  private final ConcurrentMap<String, List<Subscriber>> subscribersByTopic = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, Set<Subscriber>> subscribersByTopic = new ConcurrentHashMap<>();
 
   public void subscribe(String topic, Subscriber subscriber) {
-    subscribersByTopic.computeIfAbsent(topic, key -> new ArrayList<>()).add(subscriber);
+    subscribersByTopic.computeIfAbsent(topic, key -> new HashSet<>()).add(subscriber);
   }
 
   public void unsubscribe(String topic, String clientId) {
     if (subscribersByTopic.containsKey(topic)) {
-      List<Subscriber> subscriberList = subscribersByTopic.get(topic);
-      subscriberList.removeIf(subscriberClient -> subscriberClient.clientId().equals(clientId));
+      Set<Subscriber> subscribers = subscribersByTopic.get(topic);
+      subscribers.removeIf(subscriberClient -> subscriberClient.clientId().equals(clientId));
 
-      if (subscriberList.isEmpty()) {
+      if (subscribers.isEmpty()) {
         subscribersByTopic.remove(topic);
       }
     }
