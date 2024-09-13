@@ -17,8 +17,7 @@ import java.io.InputStream;
 
 public class FixedHeaderReader {
 
-  public FixedHeader read(InputStream input) throws IOException {
-    int firstByte = input.read();
+  public FixedHeader read(int firstByte, InputStream input) throws IOException {
     int controlPacketType = readControlPacketType(firstByte);
     int remainingLength = readRemainingLength(input);
 

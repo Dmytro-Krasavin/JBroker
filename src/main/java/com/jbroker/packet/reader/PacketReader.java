@@ -24,8 +24,8 @@ public class PacketReader {
   private final SubscribePacketDecoder subscribeDecoder;
   private final DisconnectPacketDecoder disconnectDecoder;
 
-  public MqttPacket read(InputStream input) throws IOException {
-    FixedHeader fixedHeader = fixedHeaderReader.read(input);
+  public MqttPacket read(int firstByte, InputStream input) throws IOException {
+    FixedHeader fixedHeader = fixedHeaderReader.read(firstByte, input);
     byte[] packetBuffer = buildPacketBuffer(input, fixedHeader.getRemainingLength());
 
     CommandType commandType = fixedHeader.getCommandType();
