@@ -9,7 +9,6 @@ import com.jbroker.packet.writer.PacketWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientHandler extends Thread {
 
   private final Socket socket;
-  private final InetAddress inetAddress;
-  private final int port;
   private final PacketReader packetReader;
   private final PacketWriter packetWriter;
   private final CommandDispatcher commandDispatcher;
@@ -30,8 +27,6 @@ public class ClientHandler extends Thread {
       PacketWriter packetWriter,
       CommandDispatcher commandDispatcher) {
     this.socket = socket;
-    this.inetAddress = socket.getInetAddress();
-    this.port = socket.getPort();
     this.packetReader = packetReader;
     this.packetWriter = packetWriter;
     this.commandDispatcher = commandDispatcher;
@@ -39,7 +34,7 @@ public class ClientHandler extends Thread {
 
   @Override
   public void run() {
-    log.info("{}:{}: New socket connection", inetAddress.toString(), port);
+    log.info("{}:{}: New socket connection", socket.getInetAddress().toString(), socket.getPort());
     try (InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream()) {
 
@@ -62,12 +57,12 @@ public class ClientHandler extends Thread {
       log.error("IOException occurred: {}", e.getMessage());
     } catch (PacketSendFailedException e) {
       log.error("Failed to send {} packet to client {}:{}. Reason: {}",
-          e.getMessage(), inetAddress.toString(), port, e.getCause().toString()
+          e.getMessage(), socket.getInetAddress(), socket.getPort(), e.getCause().toString()
       );
     } finally {
       try {
         socket.close();
-        log.info("{}:{}: Socket connection closed", inetAddress, port);
+        log.info("{}:{}: Socket connection closed", socket.getInetAddress(), socket.getPort());
       } catch (IOException e) {
         log.error("IOException occurred while closing socket: {}", e.getMessage());
       }
