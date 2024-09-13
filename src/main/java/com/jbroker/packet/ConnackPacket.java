@@ -1,6 +1,5 @@
 package com.jbroker.packet;
 
-import com.jbroker.command.CommandType;
 import lombok.Getter;
 
 @Getter
@@ -26,7 +25,7 @@ public class ConnackPacket extends MqttPacket {
       FixedHeader fixedHeader,
       boolean sessionPresent,
       ConnectReturnCode returnCode) {
-    super(CommandType.CONNACK, fixedHeader);
+    super(fixedHeader);
     this.sessionPresent = sessionPresent;
     this.returnCode = returnCode.getValue();
   }

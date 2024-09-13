@@ -1,6 +1,5 @@
 package com.jbroker.packet;
 
-import com.jbroker.command.CommandType;
 import lombok.Getter;
 
 @Getter
@@ -22,12 +21,13 @@ public class PublishPacket extends MqttPacket {
       String topicName,
       Integer packetIdentifier,
       String applicationMessage) {
-    super(CommandType.PUBLISH, publishFixedHeader);
+    super(publishFixedHeader);
     this.topicName = topicName;
     this.packetIdentifier = packetIdentifier;
     this.applicationMessage = applicationMessage;
   }
 
+  @Override
   public PublishFixedHeader getFixedHeader() {
     return ((PublishFixedHeader) super.getFixedHeader());
   }

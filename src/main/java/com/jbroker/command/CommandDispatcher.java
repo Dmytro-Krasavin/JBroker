@@ -16,7 +16,7 @@ public class CommandDispatcher {
     // TODO: fix this generic stuff
     CommandHandler<InboundPacket, OutboundPacket> commandHandler =
         (CommandHandler<InboundPacket, OutboundPacket>) commandHandlerFactory.getCommandHandler(
-            inboundPacket.getCommandType());
+            inboundPacket.getFixedHeader().getCommandType());
     return commandHandler.handleCommand(inboundPacket);
   }
 }

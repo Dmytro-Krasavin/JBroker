@@ -1,7 +1,5 @@
 package com.jbroker.packet;
 
-import com.jbroker.command.CommandType;
-
 public class PingRespPacket extends MqttPacket {
 
   // PINGRESP is a fixed two-byte packet
@@ -10,6 +8,6 @@ public class PingRespPacket extends MqttPacket {
   // PINGRESP packet has neither a variable header nor a payload
 
   public PingRespPacket(FixedHeader fixedHeader) {
-    super(CommandType.PINGRESP, fixedHeader);
+    super(fixedHeader);
   }
 }

@@ -26,7 +26,7 @@ public class PacketReader {
     FixedHeader fixedHeader = fixedHeaderReader.read(input);
     byte[] packetBuffer = buildPacketBuffer(input, fixedHeader.getRemainingLength());
 
-    CommandType commandType = CommandType.resolveType(fixedHeader.getControlPacketType());
+    CommandType commandType = fixedHeader.getCommandType();
     log.info("{} packet received from client", commandType.name());
 
     return switch (commandType) {

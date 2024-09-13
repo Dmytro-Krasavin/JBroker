@@ -1,6 +1,5 @@
 package com.jbroker.packet;
 
-import com.jbroker.command.CommandType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -72,7 +71,7 @@ public class ConnectPacket extends MqttPacket {
       String willMessage,
       String userName,
       String password) {
-    super(CommandType.CONNECT, fixedHeader);
+    super(fixedHeader);
     this.protocolName = protocolName;
     this.protocolLevel = protocolLevel;
     this.userNameFlag = userNameFlag;

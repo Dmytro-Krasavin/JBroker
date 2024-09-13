@@ -54,7 +54,7 @@ public class ClientHandler extends Thread {
         Optional<MqttPacket> outboundPacket = commandDispatcher.dispatchCommand(inboundPacket);
         outboundPacket.ifPresent(packet -> packetWriter.write(output, packet));
 
-        if (inboundPacket.getCommandType() == CommandType.DISCONNECT) {
+        if (inboundPacket.getFixedHeader().getCommandType() == CommandType.DISCONNECT) {
           return; // Exit the loop and close the socket
         }
       }
