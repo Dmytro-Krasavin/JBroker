@@ -12,14 +12,14 @@ public class PublishFixedHeader extends FixedHeader {
   public static final int RETAIN_FLAG_BIT = 0;
 
   private final boolean duplicateFlag;
-  private final int qosLevel;
-  private final boolean retain;
+  private final QosLevel qosLevel;
+  private final boolean retain; // TODO: implement retained feature
 
   public PublishFixedHeader(
       int controlPacketType,
       int remainingLength,
       boolean duplicateFlag,
-      int qosLevel,
+      QosLevel qosLevel,
       boolean retain) {
     super(controlPacketType, remainingLength);
     this.duplicateFlag = duplicateFlag;

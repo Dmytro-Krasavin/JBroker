@@ -1,6 +1,5 @@
 package com.jbroker.packet.encoder.impl;
 
-import static com.jbroker.packet.ConnackPacket.CONNACK_REMAINING_LENGTH;
 import static com.jbroker.packet.ConnackPacket.CONNECT_ACKNOWLEDGE_FLAGS_POSITION;
 import static com.jbroker.packet.ConnackPacket.RETURN_CODE_POSITION;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
@@ -20,8 +19,12 @@ public class ConnackPacketEncoder implements MqttPacketEncoder<ConnackPacket> {
   @Override
   public byte[] encode(ConnackPacket outboundPacket) {
     byte[] encodedFixedHeader = fixedHeaderEncoder.encode(outboundPacket.getFixedHeader());
+    byte[] encodedVariableHeader = getEncodedVariableHeader(outboundPacket);
+    return ArrayUtils.mergeArrays(encodedFixedHeader, encodedVariableHeader);
+  }
 
-    byte[] encodedVariableHeader = new byte[CONNACK_REMAINING_LENGTH];
+  private static byte[] getEncodedVariableHeader(ConnackPacket outboundPacket) {
+    byte[] encodedVariableHeader = new byte[outboundPacket.getFixedHeader().getRemainingLength()];
     byte connectAcknowledgeFlags = ByteUtils.modifyBit(
         (byte) 0,
         ConnackPacket.SESSION_PRESENT_BIT,
@@ -30,7 +33,6 @@ public class ConnackPacketEncoder implements MqttPacketEncoder<ConnackPacket> {
     encodedVariableHeader[toArrayIndex(CONNECT_ACKNOWLEDGE_FLAGS_POSITION)]
         = connectAcknowledgeFlags;
     encodedVariableHeader[toArrayIndex(RETURN_CODE_POSITION)] = outboundPacket.getReturnCode();
-
-    return ArrayUtils.mergeArrays(encodedFixedHeader, encodedVariableHeader);
+    return encodedVariableHeader;
   }
 }

@@ -4,7 +4,7 @@ import com.jbroker.command.CommandType;
 import lombok.Getter;
 
 @Getter
-public class PacketSendFailedException extends RuntimeException {
+public class PacketSendFailedException extends JBrokerException {
 
   private final CommandType commandType;
 

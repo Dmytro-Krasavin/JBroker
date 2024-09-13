@@ -27,7 +27,7 @@ public class ConnackPacket extends MqttPacket {
       ConnectReturnCode returnCode) {
     super(fixedHeader);
     this.sessionPresent = sessionPresent;
-    this.returnCode = returnCode.getValue();
+    this.returnCode = returnCode.getCode();
   }
 
   @Getter
@@ -51,10 +51,10 @@ public class ConnackPacket extends MqttPacket {
     CONNECTION_ACCEPTED((byte) 0),
     ;
 
-    private final byte value;
+    private final byte code;
 
-    ConnectReturnCode(byte value) {
-      this.value = value;
+    ConnectReturnCode(byte code) {
+      this.code = code;
     }
   }
 }

@@ -4,10 +4,13 @@ import static com.jbroker.packet.PublishFixedHeader.DUPLICATE_FLAG_BIT;
 import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_END_BIT;
 import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_START_BIT;
 import static com.jbroker.packet.PublishFixedHeader.RETAIN_FLAG_BIT;
+import static com.jbroker.packet.SubscribePacket.SUBSCRIBE_FIXED_HEADER_BYTE;
 
 import com.jbroker.command.CommandType;
+import com.jbroker.exception.MalformedPacketException;
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.PublishFixedHeader;
+import com.jbroker.packet.QosLevel;
 import com.jbroker.utils.ByteUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +24,9 @@ public class FixedHeaderReader {
 
     if (controlPacketType == CommandType.PUBLISH.getValue()) {
       return readPublishFixedHeader(controlPacketType, remainingLength, (byte) firstByte);
+    }
+    if (controlPacketType == CommandType.SUBSCRIBE.getValue()) {
+      validateSubscribeFixedHeader(firstByte);
     }
 
     return new FixedHeader(controlPacketType, remainingLength);
@@ -65,7 +71,7 @@ public class FixedHeaderReader {
       int remainingLength,
       byte firstByte) {
     boolean duplicateFlag = readDuplicateFlag(firstByte);
-    int qosLevel = readQosLevel(firstByte);
+    QosLevel qosLevel = readQosLevel(firstByte);
     boolean retain = readRetainFlag(firstByte);
     return new PublishFixedHeader(
         controlPacketType,
@@ -79,7 +85,7 @@ public class FixedHeaderReader {
   /**
    * @see <a
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718038">3.3.1.1
-   * DUP</a>
+   * PUBLISH DUP flag</a>
    */
   private static boolean readDuplicateFlag(byte firstByte) {
     return ByteUtils.isBitSet(firstByte, DUPLICATE_FLAG_BIT);
@@ -88,18 +94,41 @@ public class FixedHeaderReader {
   /**
    * @see <a
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718038">3.3.1.2
-   * QoS</a>
+   * PUBLISH QoS</a>
    */
-  private static int readQosLevel(byte firstByte) {
-    return ByteUtils.combineBits(firstByte, QOS_LEVEL_START_BIT, QOS_LEVEL_END_BIT);
+  private static QosLevel readQosLevel(byte firstByte) {
+    return QosLevel.resolveQoS(
+        ByteUtils.combineBits(firstByte, QOS_LEVEL_START_BIT, QOS_LEVEL_END_BIT)
+    );
   }
 
   /**
    * @see <a
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718038">3.3.1.3
-   * RETAIN</a>
+   * PUBLISH RETAIN</a>
    */
   private static boolean readRetainFlag(byte firstByte) {
     return ByteUtils.isBitSet(firstByte, RETAIN_FLAG_BIT);
+  }
+
+  /**
+   * From MQTT specification: <i>Bits 3,2,1 and 0 of the fixed header of the SUBSCRIBE Control
+   * Packet are reserved and MUST be set to 0,0,1 and 0 respectively. The Server MUST treat any
+   * other value as malformed and close the Network Connection</i>
+   *
+   * @see <a
+   * href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718064">3.8.1
+   * SUBSCRIBE Fixed header</a>
+   */
+  private void validateSubscribeFixedHeader(int firstByte) {
+    if (firstByte != SUBSCRIBE_FIXED_HEADER_BYTE) {
+      throw new MalformedPacketException(
+          CommandType.SUBSCRIBE,
+          String.format(
+              "Malformed SUBSCRIBE Fixed Header. Expected 0x%x but received 0x%x",
+              SUBSCRIBE_FIXED_HEADER_BYTE, firstByte
+          )
+      );
+    }
   }
 }

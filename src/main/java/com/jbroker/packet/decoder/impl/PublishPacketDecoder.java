@@ -11,6 +11,7 @@ import static com.jbroker.utils.PacketParseUtils.readStringField;
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.PublishFixedHeader;
 import com.jbroker.packet.PublishPacket;
+import com.jbroker.packet.QosLevel;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import com.jbroker.utils.PacketParseUtils;
 
@@ -52,8 +53,9 @@ public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
    * href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718039">3.3.2.2
    * Packet Identifier</a>
    */
-  private Integer readPacketIdentifier(byte[] packetBuffer, int qosLevel, String topicName) {
-    if (qosLevel == QOS_0.getLevel()) {
+  private Integer readPacketIdentifier(byte[] packetBuffer, QosLevel qosLevel, String topicName) {
+    // Packet Identifier in the PUBLISH packet is only present if the QoS level is 1 or 2
+    if (qosLevel == QOS_0) {
       return null;
     }
 

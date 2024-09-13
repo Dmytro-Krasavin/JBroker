@@ -1,5 +1,6 @@
 package com.jbroker.packet;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,4 +14,10 @@ public enum QosLevel {
   ;
 
   private final int level;
+
+  public static QosLevel resolveQoS(int qosLevel) {
+    return Arrays.stream(values()).filter(type -> type.getLevel() == qosLevel)
+        .findFirst()
+        .orElseThrow(IllegalArgumentException::new);
+  }
 }
