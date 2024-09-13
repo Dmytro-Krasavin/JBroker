@@ -1,6 +1,5 @@
 package com.jbroker;
 
-import com.jbroker.client.ClientConnectionFactory;
 import com.jbroker.client.ClientConnectionManager;
 import com.jbroker.client.ClientConnectionRegistry;
 import com.jbroker.client.ClientPublisher;
@@ -45,32 +44,30 @@ public class Main {
     MessageQueue messageQueue = new MessageQueue(clientPublisher);
     Broker broker = new Broker(
         new ClientConnectionManager(
-            new ClientConnectionFactory(
-                new PacketReader(
-                    new FixedHeaderReader(),
-                    new ConnectPacketDecoder(),
-                    new PingReqPacketDecoder(),
-                    new PublishPacketDecoder(),
-                    new SubscribePacketDecoder(),
-                    new UnsubscribePacketDecoder(),
-                    new DisconnectPacketDecoder()
-                ),
-                new PacketWriter(
-                    new ConnackPacketEncoder(fixedHeaderEncoder),
-                    new PingRespPacketEncoder(fixedHeaderEncoder),
-                    new SubackPacketEncoder(fixedHeaderEncoder),
-                    new UnsubackPacketEncoder(fixedHeaderEncoder),
-                    new PublishPacketEncoder(fixedHeaderEncoder)
-                ),
-                new CommandDispatcher(
-                    new CommandHandlerFactory(
-                        new ConnectHandler(),
-                        new PingReqHandler(),
-                        new PublishHandler(messageQueue),
-                        new SubscribeHandler(subscriptionRegistry),
-                        new UnsubscribeHandler(subscriptionRegistry),
-                        new DisconnectHandler()
-                    )
+            new PacketReader(
+                new FixedHeaderReader(),
+                new ConnectPacketDecoder(),
+                new PingReqPacketDecoder(),
+                new PublishPacketDecoder(),
+                new SubscribePacketDecoder(),
+                new UnsubscribePacketDecoder(),
+                new DisconnectPacketDecoder()
+            ),
+            new PacketWriter(
+                new ConnackPacketEncoder(fixedHeaderEncoder),
+                new PingRespPacketEncoder(fixedHeaderEncoder),
+                new SubackPacketEncoder(fixedHeaderEncoder),
+                new UnsubackPacketEncoder(fixedHeaderEncoder),
+                new PublishPacketEncoder(fixedHeaderEncoder)
+            ),
+            new CommandDispatcher(
+                new CommandHandlerFactory(
+                    new ConnectHandler(),
+                    new PingReqHandler(),
+                    new PublishHandler(messageQueue),
+                    new SubscribeHandler(subscriptionRegistry),
+                    new UnsubscribeHandler(subscriptionRegistry),
+                    new DisconnectHandler()
                 )
             ),
             clientConnectionRegistry
