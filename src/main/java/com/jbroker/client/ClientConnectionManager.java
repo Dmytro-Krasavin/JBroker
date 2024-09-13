@@ -10,14 +10,14 @@ public class ClientConnectionManager {
   private final ClientConnectionFactory clientConnectionFactory;
   private final ClientConnectionRegistry clientConnectionRegistry;
 
-  public void startClientConnection(Socket clientSocket) throws IOException {
+  public ClientConnection createClientConnection(Socket clientSocket) throws IOException {
     ClientConnection clientConnection = clientConnectionFactory.createClientConnection(
         clientSocket
     );
-    clientConnection.start();
     clientConnectionRegistry.addClientConnection(
         clientSocket.getRemoteSocketAddress(),
         clientConnection
     );
+    return clientConnection;
   }
 }

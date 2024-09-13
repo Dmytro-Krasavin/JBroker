@@ -3,6 +3,7 @@ package com.jbroker;
 import com.jbroker.client.ClientConnectionFactory;
 import com.jbroker.client.ClientConnectionManager;
 import com.jbroker.client.ClientConnectionRegistry;
+import com.jbroker.client.ClientPublisher;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.handler.CommandHandlerFactory;
 import com.jbroker.command.handler.impl.ConnectHandler;
@@ -11,6 +12,7 @@ import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
 import com.jbroker.command.handler.impl.UnsubscribeHandler;
+import com.jbroker.message.MessageQueue;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -36,6 +38,11 @@ public class Main {
     SubscriptionRegistry subscriptionRegistry = new SubscriptionRegistry();
     ClientConnectionRegistry clientConnectionRegistry = new ClientConnectionRegistry();
     FixedHeaderEncoder fixedHeaderEncoder = new FixedHeaderEncoder();
+    ClientPublisher clientPublisher = new ClientPublisher(
+        subscriptionRegistry,
+        clientConnectionRegistry
+    );
+    MessageQueue messageQueue = new MessageQueue(clientPublisher);
     Broker broker = new Broker(
         new ClientConnectionManager(
             new ClientConnectionFactory(
@@ -59,7 +66,7 @@ public class Main {
                     new CommandHandlerFactory(
                         new ConnectHandler(),
                         new PingReqHandler(),
-                        new PublishHandler(subscriptionRegistry, clientConnectionRegistry),
+                        new PublishHandler(messageQueue),
                         new SubscribeHandler(subscriptionRegistry),
                         new UnsubscribeHandler(subscriptionRegistry),
                         new DisconnectHandler()
@@ -67,7 +74,8 @@ public class Main {
                 )
             ),
             clientConnectionRegistry
-        )
+        ),
+        messageQueue
     );
     broker.run(BROKER_PORT);
   }
