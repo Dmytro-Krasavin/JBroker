@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class SubackPacket extends MqttPacket {
 
-  // Byte positions in the SUBSCRIBE packet (counting after Fixed Header bytes)
+  // Byte positions in the SUBACK packet (counting after Fixed Header bytes)
   public static final int PACKET_IDENTIFIER_START_POSITION = 1;
   public static final int PACKET_IDENTIFIER_END_POSITION = 2;
   public static final int PACKET_IDENTIFIER_LENGTH = 2;
