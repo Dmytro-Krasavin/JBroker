@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UnknownCommandHandler implements CommandHandler<MqttPacket, MqttPacket> {
 
   @Override
-  public Optional<MqttPacket> handleCommand(MqttPacket inboundPacket) {
+  public Optional<MqttPacket> handleCommand(MqttPacket inboundPacket, String clientId) {
     log.error("Unknown command received! Command type: {}",
         inboundPacket.getFixedHeader().getCommandType());
     return Optional.empty();

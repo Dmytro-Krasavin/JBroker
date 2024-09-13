@@ -8,7 +8,7 @@ import java.util.Optional;
 public class DisconnectHandler implements CommandHandler<DisconnectPacket, MqttPacket> {
 
   @Override
-  public Optional<MqttPacket> handleCommand(DisconnectPacket disconnectPacket) {
+  public Optional<MqttPacket> handleCommand(DisconnectPacket disconnectPacket, String clientId) {
     // do nothing for now
     return Optional.empty();
   }

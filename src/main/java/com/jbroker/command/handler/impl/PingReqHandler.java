@@ -13,7 +13,7 @@ import java.util.Optional;
 public class PingReqHandler implements CommandHandler<PingReqPacket, PingRespPacket> {
 
   @Override
-  public Optional<PingRespPacket> handleCommand(PingReqPacket packet) {
+  public Optional<PingRespPacket> handleCommand(PingReqPacket packet, String clientId) {
     if (packet.getFixedHeader().getRemainingLength() != PINGREQ_REMAINING_LENGTH) {
       throw new IllegalArgumentException("Invalid PINGREQ packet received");
     }

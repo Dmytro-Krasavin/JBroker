@@ -15,7 +15,7 @@ import static com.jbroker.packet.ConnectPacket.WILL_RETAIN_FLAG_BIT;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.combineBytesToInt;
-import static com.jbroker.utils.PacketDecodeUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
 import com.jbroker.packet.ConnectPacket;
 import com.jbroker.packet.FixedHeader;
@@ -79,7 +79,7 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
   }
 
   private String readProtocolName(byte[] packetBuffer) {
-    return readStringField(packetBuffer, ConnectPacket.PROTOCOL_NAME_START_POSITION);
+    return readTextField(packetBuffer, ConnectPacket.PROTOCOL_NAME_START_POSITION);
   }
 
   private int readKeepAlive(byte[] packetBuffer) {
@@ -89,18 +89,18 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
   }
 
   private String readClientId(byte[] packetBuffer) {
-    return readStringField(packetBuffer, ConnectPacket.CLIENT_ID_START_POSITION);
+    return readTextField(packetBuffer, ConnectPacket.CLIENT_ID_START_POSITION);
   }
 
   private String readWillTopic(byte[] packetBuffer, String clientId) {
     int willTopicStartPosition = calculateStartBytePosition(CLIENT_ID_START_POSITION, clientId);
-    return readStringField(packetBuffer, willTopicStartPosition);
+    return readTextField(packetBuffer, willTopicStartPosition);
   }
 
   private String readWillMessage(byte[] packetBuffer, String clientId, String willTopic) {
     int willMessageStartPosition = calculateStartBytePosition(
         CLIENT_ID_START_POSITION, clientId, willTopic);
-    return readStringField(packetBuffer, willMessageStartPosition);
+    return readTextField(packetBuffer, willMessageStartPosition);
   }
 
   private String readUserName(
@@ -111,7 +111,7 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
     int userNameStartBytePosition = calculateStartBytePosition(
         CLIENT_ID_START_POSITION, clientId, willTopic, willMessage
     );
-    return readStringField(packetBuffer, userNameStartBytePosition);
+    return readTextField(packetBuffer, userNameStartBytePosition);
   }
 
   private String readPassword(
@@ -123,6 +123,6 @@ public class ConnectPacketDecoder implements MqttPacketDecoder<ConnectPacket> {
     int passwordStartPosition = calculateStartBytePosition(
         CLIENT_ID_START_POSITION, clientId, willTopic, willMessage, userName
     );
-    return readStringField(packetBuffer, passwordStartPosition);
+    return readTextField(packetBuffer, passwordStartPosition);
   }
 }

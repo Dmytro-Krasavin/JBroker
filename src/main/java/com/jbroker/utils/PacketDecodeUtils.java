@@ -14,23 +14,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // This is the utility class
 public class PacketDecodeUtils {
 
-  public static final int STRING_LENGTH_OFFSET = 2;
+  public static final int TEXT_LENGTH_OFFSET = 2;
 
   /**
    * @see <a
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718016">1.5.3
    * UTF-8 encoded strings</a>
    */
-  public static String readStringField(byte[] packetBuffer, int startBytePosition) {
+  public static String readTextField(byte[] packetBuffer, int startBytePosition) {
     int lengthMostSignificantByte = readUnsignedByte(packetBuffer, startBytePosition);
     int lengthLeastSignificantByte = readUnsignedByte(packetBuffer, startBytePosition + 1);
     int startIndex = toArrayIndex(startBytePosition);
-    byte[] stringBytes = Arrays.copyOfRange(
+    byte[] textBytes = Arrays.copyOfRange(
         packetBuffer,
-        startIndex + lengthMostSignificantByte + STRING_LENGTH_OFFSET,
-        startIndex + lengthLeastSignificantByte + STRING_LENGTH_OFFSET
+        startIndex + lengthMostSignificantByte + TEXT_LENGTH_OFFSET,
+        startIndex + lengthLeastSignificantByte + TEXT_LENGTH_OFFSET
     );
-    return new String(stringBytes, MqttPacket.TEXT_FIELD_ENCODING);
+    return new String(textBytes, MqttPacket.TEXT_FIELD_ENCODING);
   }
 
   /**
@@ -41,9 +41,9 @@ public class PacketDecodeUtils {
   public static String readApplicationMessage(
       byte[] packetBuffer,
       int startBytePosition,
-      int remainingLength) {
+      int endBytePosition) {
     int startIndex = toArrayIndex(startBytePosition);
-    int endIndex = toArrayIndex(remainingLength);
+    int endIndex = toArrayIndex(endBytePosition);
     if (endIndex < startIndex) {
       return ""; // It is valid for a PUBLISH Packet to contain a zero length payload
     }
@@ -77,7 +77,7 @@ public class PacketDecodeUtils {
   public static int calculateStartBytePosition(int offsetPosition, String... previousStringFields) {
     int calculatedPosition = Arrays.stream(previousStringFields)
         .filter(Objects::nonNull)
-        .mapToInt(previousStringField -> STRING_LENGTH_OFFSET + previousStringField.length())
+        .mapToInt(previousStringField -> TEXT_LENGTH_OFFSET + previousStringField.length())
         .sum();
     return offsetPosition + calculatedPosition;
   }

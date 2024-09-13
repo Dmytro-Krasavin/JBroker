@@ -1,5 +1,7 @@
 package com.jbroker.packet;
 
+import static com.jbroker.command.CommandType.PUBLISH;
+
 import lombok.Getter;
 
 @Getter
@@ -16,12 +18,11 @@ public class PublishFixedHeader extends FixedHeader {
   private final boolean retain; // TODO: implement retained feature
 
   public PublishFixedHeader(
-      int controlPacketType,
       int remainingLength,
       boolean duplicateFlag,
       QosLevel qosLevel,
       boolean retain) {
-    super(controlPacketType, remainingLength);
+    super(PUBLISH.getValue(), remainingLength);
     this.duplicateFlag = duplicateFlag;
     this.qosLevel = qosLevel;
     this.retain = retain;

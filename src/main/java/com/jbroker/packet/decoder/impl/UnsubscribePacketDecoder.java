@@ -4,7 +4,7 @@ import static com.jbroker.packet.UnsubscribePacket.PACKET_IDENTIFIER_END_POSITIO
 import static com.jbroker.packet.UnsubscribePacket.PACKET_IDENTIFIER_START_POSITION;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.decodePacketIdentifier;
-import static com.jbroker.utils.PacketDecodeUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.UnsubscribePacket;
@@ -39,7 +39,7 @@ public class UnsubscribePacketDecoder implements MqttPacketDecoder<UnsubscribePa
     List<String> topics = new LinkedList<>();
     int currentPosition = PACKET_IDENTIFIER_END_POSITION + 1;
     while (currentPosition < packetBuffer.length) {
-      String topicFilter = readStringField(packetBuffer, currentPosition);
+      String topicFilter = readTextField(packetBuffer, currentPosition);
       topics.add(topicFilter);
       currentPosition = calculateStartBytePosition(currentPosition, topicFilter);
     }

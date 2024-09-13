@@ -2,6 +2,7 @@ package com.jbroker.utils;
 
 import static com.jbroker.utils.ByteUtils.toUnsigned;
 
+import com.jbroker.packet.MqttPacket;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,37 @@ public class PacketEncodeUtils {
     packetIdentifierBytes[0] = getMSB(packetIdentifier);
     packetIdentifierBytes[1] = getLSB(packetIdentifier);
     return packetIdentifierBytes;
+  }
+
+  /**
+   * Encodes a text field into a byte array, where the first two bytes represent the length of the
+   * text (in the Most Significant Byte (MSB) and Least Significant Byte (LSB) format), followed by
+   * the UTF-8 encoded bytes of the text itself.
+   *
+   * <p>@see <a
+   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718016">1.5.3
+   * UTF-8 encoded strings</a>
+   *
+   * @param text The text to encode.
+   * @return A byte array where the first two bytes represent the length of the text, followed by
+   * the UTF-8
+   */
+  public static byte[] encodeTextField(String text) {
+    byte[] textBytes = text.getBytes(MqttPacket.TEXT_FIELD_ENCODING);
+    byte[] textLengthBytes = new byte[2];
+    textLengthBytes[0] = getMSB(textBytes.length);
+    textLengthBytes[1] = getLSB(textBytes.length);
+    return ArrayUtils.mergeArrays(textLengthBytes, textBytes);
+  }
+
+
+  /**
+   * @see <a
+   * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718040">3.3.3
+   * PUBLISH Payload</a>
+   */
+  public static byte[] encodeApplicationMessage(String applicationMessage) {
+    return applicationMessage.getBytes(MqttPacket.TEXT_FIELD_ENCODING);
   }
 
   /**

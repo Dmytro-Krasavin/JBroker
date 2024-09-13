@@ -3,6 +3,7 @@ package com.jbroker.client;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
+import com.jbroker.packet.ConnectPacket;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
@@ -11,24 +12,30 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Optional;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ClientHandler extends Thread {
+public class ClientConnection extends Thread {
 
   private static final int CLIENT_CLOSED_SOCKET_CONNECTION = -1;
 
   private final Socket socket;
+  private final OutputStream outputStream;
   private final PacketReader packetReader;
   private final PacketWriter packetWriter;
   private final CommandDispatcher commandDispatcher;
 
-  public ClientHandler(
+  @Getter
+  private String clientId;
+
+  public ClientConnection(
       Socket socket,
       PacketReader packetReader,
       PacketWriter packetWriter,
-      CommandDispatcher commandDispatcher) {
+      CommandDispatcher commandDispatcher) throws IOException {
     this.socket = socket;
+    this.outputStream = socket.getOutputStream();
     this.packetReader = packetReader;
     this.packetWriter = packetWriter;
     this.commandDispatcher = commandDispatcher;
@@ -37,38 +44,55 @@ public class ClientHandler extends Thread {
   @SuppressWarnings("StatementWithEmptyBody")
   @Override
   public void run() {
-    log.info("{}:{}: New socket connection", socket.getInetAddress().toString(), socket.getPort());
-    try (InputStream input = socket.getInputStream();
-        OutputStream output = socket.getOutputStream()) {
-      while (listenForIncomingPackets(input, output))
+    log.info("New socket connection! Client socket address: {}", socket.getRemoteSocketAddress());
+    try (InputStream inputStream = socket.getInputStream()) {
+      while (listenForIncomingPackets(inputStream))
         ;
     } catch (IOException e) {
       log.error("IOException occurred: {}", e.getMessage());
     } catch (PacketSendFailedException e) {
-      log.error("Failed to send {} packet to client {}:{}. Reason: {}",
-          e.getMessage(), socket.getInetAddress(), socket.getPort(), e.getCause().toString()
+      log.error("Failed to send {} packet to client {}. Reason: {}",
+          e.getCommandType().name(), socket.getRemoteSocketAddress(), e.getCause().toString()
       );
     } finally {
       closeSocket();
     }
   }
 
-  private boolean listenForIncomingPackets(InputStream input, OutputStream output)
+  public void sentPacket(MqttPacket outboundPacket) {
+    log.info("Sending {} packet to client '{}'",
+        outboundPacket.getFixedHeader().getCommandType(), clientId);
+    packetWriter.write(outputStream, outboundPacket);
+  }
+
+  private boolean listenForIncomingPackets(InputStream input)
       throws IOException {
     //  java.io.InputStream.read() blocks until input data is available,
     //  the end of the stream is detected, or an exception is thrown.
     int firstByte = input.read();
-    boolean clientClosedConnection = didClientCloseSocketConnection(firstByte);
-    if (clientClosedConnection) {
-      log.info("{}:{}: Client closed socket connection", socket.getInetAddress(), socket.getPort());
+    if (didClientCloseSocketConnection(firstByte)) {
+      log.info("{}: Client closed socket connection!", socket.getRemoteSocketAddress());
       return false;
     }
 
     MqttPacket inboundPacket = packetReader.read(firstByte, input);
-    Optional<MqttPacket> outboundPacket = commandDispatcher.dispatchCommand(inboundPacket);
-    outboundPacket.ifPresent(packet -> packetWriter.write(output, packet));
+    Optional<MqttPacket> outboundPacket = commandDispatcher.dispatchCommand(
+        inboundPacket,
+        clientId != null ? clientId : socket.getRemoteSocketAddress().toString()
+    );
+    outboundPacket.ifPresent(this::sentPacket);
 
-    return didClientCloseMqttConnection(inboundPacket);
+    if (clientId == null && inboundPacket instanceof ConnectPacket connectPacket) {
+      clientId = connectPacket.getClientId();
+      log.info("New MQTT connection! Client id: '{}'", clientId);
+    }
+
+    boolean clientClosedMqttConnection = didClientCloseMqttConnection(inboundPacket);
+    if (clientClosedMqttConnection) {
+      log.info("{}: Client closed MQTT connection!", clientId);
+      return false;
+    }
+    return true;
   }
 
   private void closeSocket() {
@@ -85,6 +109,6 @@ public class ClientHandler extends Thread {
   }
 
   private static boolean didClientCloseMqttConnection(MqttPacket inboundPacket) {
-    return inboundPacket.getFixedHeader().getCommandType() != CommandType.DISCONNECT;
+    return inboundPacket.getFixedHeader().getCommandType() == CommandType.DISCONNECT;
   }
 }

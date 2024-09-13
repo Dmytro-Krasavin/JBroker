@@ -7,7 +7,7 @@ import static com.jbroker.utils.ByteUtils.combineBits;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.decodePacketIdentifier;
-import static com.jbroker.utils.PacketDecodeUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.QosLevel;
@@ -44,7 +44,7 @@ public class SubscribePacketDecoder implements MqttPacketDecoder<SubscribePacket
     Map<QosLevel, String> topicsByQoS = new LinkedHashMap<>();
     int currentPosition = PACKET_IDENTIFIER_END_POSITION + 1;
     while (currentPosition < packetBuffer.length) {
-      String topicFilter = readStringField(packetBuffer, currentPosition);
+      String topicFilter = readTextField(packetBuffer, currentPosition);
 
       currentPosition = calculateStartBytePosition(currentPosition, topicFilter);
       byte requestedQosByte = readByte(packetBuffer, currentPosition);

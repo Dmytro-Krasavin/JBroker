@@ -1,6 +1,7 @@
 package com.jbroker.utils;
 
 import java.util.Arrays;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -21,5 +22,13 @@ public class ArrayUtils {
       }
     }
     return resultArray;
+  }
+
+  public static byte[] toByteArray(List<Byte> byteList) {
+    byte[] byteArray = new byte[byteList.size()];
+    for (int i = 0; i < byteList.size(); i++) {
+      byteArray[i] = byteList.get(i);
+    }
+    return byteArray;
   }
 }

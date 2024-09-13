@@ -23,7 +23,7 @@ public class FixedHeaderReader {
     int remainingLength = readRemainingLength(input);
 
     if (controlPacketType == CommandType.PUBLISH.getValue()) {
-      return readPublishFixedHeader(controlPacketType, remainingLength, (byte) firstByte);
+      return readPublishFixedHeader((byte) firstByte, remainingLength);
     }
     if (controlPacketType == CommandType.SUBSCRIBE.getValue()) {
       validateSubscribeFixedHeader(firstByte);
@@ -69,20 +69,11 @@ public class FixedHeaderReader {
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718038">3.3.1
    * PUBLISH Fixed header</a>
    */
-  private static PublishFixedHeader readPublishFixedHeader(
-      int controlPacketType,
-      int remainingLength,
-      byte firstByte) {
+  private static PublishFixedHeader readPublishFixedHeader(byte firstByte, int remainingLength) {
     boolean duplicateFlag = readDuplicateFlag(firstByte);
     QosLevel qosLevel = readQosLevel(firstByte);
     boolean retain = readRetainFlag(firstByte);
-    return new PublishFixedHeader(
-        controlPacketType,
-        remainingLength,
-        duplicateFlag,
-        qosLevel,
-        retain
-    );
+    return new PublishFixedHeader(remainingLength, duplicateFlag, qosLevel, retain);
   }
 
   /**

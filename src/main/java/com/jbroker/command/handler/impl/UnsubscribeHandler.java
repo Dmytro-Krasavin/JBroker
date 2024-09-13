@@ -7,18 +7,33 @@ import com.jbroker.command.handler.CommandHandler;
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.UnsubackPacket;
 import com.jbroker.packet.UnsubscribePacket;
+import com.jbroker.subscription.SubscriptionRegistry;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class UnsubscribeHandler implements CommandHandler<UnsubscribePacket, UnsubackPacket> {
 
+  private final SubscriptionRegistry subscriptionRegistry;
+
   @Override
-  public Optional<UnsubackPacket> handleCommand(UnsubscribePacket unsubscribePacket) {
+  public Optional<UnsubackPacket> handleCommand(
+      UnsubscribePacket unsubscribePacket,
+      String clientId) {
+    List<String> topics = unsubscribePacket.getTopics();
+    log.info("Unsubscribe topics: {}", Arrays.toString(topics.toArray()));
     log.info("Packet Identifier: {}", unsubscribePacket.getPacketIdentifier());
     FixedHeader fixedHeader = new FixedHeader(UNSUBACK.getValue(), UNSUBACK_REMAINING_LENGTH);
-    return Optional.of(
+    Optional<UnsubackPacket> unsubackPacket = Optional.of(
         new UnsubackPacket(fixedHeader, unsubscribePacket.getPacketIdentifier())
     );
+
+    topics.forEach(topic -> subscriptionRegistry.unsubscribe(topic, clientId));
+
+    return unsubackPacket;
   }
 }

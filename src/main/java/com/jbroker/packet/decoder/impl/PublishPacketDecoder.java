@@ -6,7 +6,7 @@ import static com.jbroker.packet.QosLevel.QOS_0;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.combineBytesToInt;
-import static com.jbroker.utils.PacketDecodeUtils.readStringField;
+import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
 import com.jbroker.packet.FixedHeader;
 import com.jbroker.packet.PublishFixedHeader;
@@ -44,7 +44,7 @@ public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
    * Topic Name</a>
    */
   private String readTopicName(byte[] packetBuffer) {
-    return readStringField(packetBuffer, TOPIC_NAME_START_POSITION);
+    return readTextField(packetBuffer, TOPIC_NAME_START_POSITION);
   }
 
 
@@ -81,13 +81,14 @@ public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
     int applicationMessageStartBytePosition = calculateStartBytePosition(
         TOPIC_NAME_START_POSITION, topicName
     );
+    int applicationMessageEndBytePosition = remainingLength + 1;
     if (packetIdentifier != null) {
       applicationMessageStartBytePosition += PACKET_IDENTIFIER_LENGTH;
     }
     return PacketDecodeUtils.readApplicationMessage(
         packetBuffer,
         applicationMessageStartBytePosition,
-        remainingLength
+        applicationMessageEndBytePosition
     );
   }
 }

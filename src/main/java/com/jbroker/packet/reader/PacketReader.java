@@ -26,9 +26,9 @@ public class PacketReader {
   private final UnsubscribePacketDecoder unsubscribeDecoder;
   private final DisconnectPacketDecoder disconnectDecoder;
 
-  public MqttPacket read(int firstByte, InputStream input) throws IOException {
-    FixedHeader fixedHeader = fixedHeaderReader.read(firstByte, input);
-    byte[] packetBuffer = buildPacketBuffer(input, fixedHeader.getRemainingLength());
+  public MqttPacket read(int firstByte, InputStream inputStream) throws IOException {
+    FixedHeader fixedHeader = fixedHeaderReader.read(firstByte, inputStream);
+    byte[] packetBuffer = buildPacketBuffer(inputStream, fixedHeader.getRemainingLength());
 
     CommandType commandType = fixedHeader.getCommandType();
     log.info("{} packet received from client", commandType.name());
@@ -45,9 +45,9 @@ public class PacketReader {
     };
   }
 
-  private byte[] buildPacketBuffer(InputStream input, int remainingLength) throws IOException {
+  private byte[] buildPacketBuffer(InputStream inputStream, int remainingLength) throws IOException {
     byte[] packetBuffer = new byte[remainingLength];
-    int totalReadBytes = input.read(packetBuffer);
+    int totalReadBytes = inputStream.read(packetBuffer);
     if (totalReadBytes < remainingLength) {
       throw new IllegalStateException(String.format(
           "Not all bytes were read to fill the packet buffer. Total read bytes: %s, remaining length: %s",
