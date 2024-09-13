@@ -35,7 +35,7 @@ public class PacketParseUtils {
   /**
    * @see <a
    * href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718040">3.3.3
-   * Payload</a>
+   * PUBLISH Payload</a>
    */
   public static String readApplicationMessage(
       byte[] packetBuffer,
@@ -43,6 +43,9 @@ public class PacketParseUtils {
       int remainingLength) {
     int startIndex = toArrayIndex(startBytePosition);
     int endIndex = toArrayIndex(remainingLength);
+    if (endIndex < startIndex) {
+      return ""; // It is valid for a PUBLISH Packet to contain a zero length payload
+    }
     byte[] stringBytes = Arrays.copyOfRange(packetBuffer, startIndex, endIndex);
     return new String(stringBytes, MqttPacket.TEXT_FIELD_ENCODING);
   }
