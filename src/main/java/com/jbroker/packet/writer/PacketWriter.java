@@ -2,12 +2,12 @@ package com.jbroker.packet.writer;
 
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
-import com.jbroker.packet.ConnackPacket;
-import com.jbroker.packet.MqttPacket;
-import com.jbroker.packet.PingRespPacket;
-import com.jbroker.packet.PublishPacket;
-import com.jbroker.packet.SubackPacket;
-import com.jbroker.packet.UnsubackPacket;
+import com.jbroker.packet.model.outbound.impl.ConnackPacket;
+import com.jbroker.packet.model.outbound.impl.PingRespPacket;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
+import com.jbroker.packet.model.outbound.impl.SubackPacket;
+import com.jbroker.packet.model.outbound.impl.UnsubackPacket;
 import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
 import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
 import com.jbroker.packet.encoder.impl.PublishPacketEncoder;
@@ -28,7 +28,7 @@ public class PacketWriter {
   private final UnsubackPacketEncoder unsubackEncoder;
   private final PublishPacketEncoder publishEncoder;
 
-  public void write(OutputStream outputStream, MqttPacket outboundPacket) {
+  public void write(OutputStream outputStream, ServerToClientPacket outboundPacket) {
     CommandType commandType = outboundPacket.getCommandType();
     byte[] encodedPacket = switch (commandType) {
       case CONNACK -> connackEncoder.encode((ConnackPacket) outboundPacket);

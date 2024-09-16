@@ -1,13 +1,13 @@
 package com.jbroker.command.handler.impl;
 
 import static com.jbroker.command.CommandType.SUBACK;
-import static com.jbroker.packet.SubackPacket.PACKET_IDENTIFIER_LENGTH;
+import static com.jbroker.packet.model.outbound.impl.SubackPacket.PACKET_IDENTIFIER_LENGTH;
 
 import com.jbroker.command.handler.CommandHandler;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.SubackPacket;
-import com.jbroker.packet.SubackPacket.SubackReturnCode;
-import com.jbroker.packet.SubscribePacket;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.outbound.impl.SubackPacket;
+import com.jbroker.packet.model.outbound.impl.SubackPacket.SubackReturnCode;
+import com.jbroker.packet.model.inbound.impl.SubscribePacket;
 import com.jbroker.subscription.Subscriber;
 import com.jbroker.subscription.SubscriptionRegistry;
 import java.util.LinkedList;

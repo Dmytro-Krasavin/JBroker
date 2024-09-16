@@ -2,7 +2,7 @@ package com.jbroker.utils;
 
 import static com.jbroker.utils.ByteUtils.toUnsigned;
 
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.MqttPacket;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

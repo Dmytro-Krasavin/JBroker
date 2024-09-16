@@ -4,7 +4,7 @@ import static com.jbroker.utils.PacketEncodeUtils.encodeApplicationMessage;
 import static com.jbroker.utils.PacketEncodeUtils.encodePacketIdentifier;
 import static com.jbroker.utils.PacketEncodeUtils.encodeTextField;
 
-import com.jbroker.packet.PublishPacket;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
 import com.jbroker.utils.ArrayUtils;

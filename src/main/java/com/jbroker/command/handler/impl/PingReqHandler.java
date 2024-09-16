@@ -1,13 +1,13 @@
 package com.jbroker.command.handler.impl;
 
 import static com.jbroker.command.CommandType.PINGRESP;
-import static com.jbroker.packet.PingReqPacket.PINGREQ_REMAINING_LENGTH;
-import static com.jbroker.packet.PingRespPacket.PINGRESP_REMAINING_LENGTH;
+import static com.jbroker.packet.model.inbound.impl.PingReqPacket.PINGREQ_REMAINING_LENGTH;
+import static com.jbroker.packet.model.outbound.impl.PingRespPacket.PINGRESP_REMAINING_LENGTH;
 
 import com.jbroker.command.handler.CommandHandler;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.PingReqPacket;
-import com.jbroker.packet.PingRespPacket;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.inbound.impl.PingReqPacket;
+import com.jbroker.packet.model.outbound.impl.PingRespPacket;
 import java.util.Optional;
 
 public class PingReqHandler implements CommandHandler<PingReqPacket, PingRespPacket> {

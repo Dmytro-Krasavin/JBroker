@@ -1,21 +1,21 @@
 package com.jbroker.packet.decoder.impl;
 
-import static com.jbroker.packet.PublishPacket.PACKET_IDENTIFIER_LENGTH;
-import static com.jbroker.packet.PublishPacket.TOPIC_NAME_START_POSITION;
-import static com.jbroker.packet.QosLevel.QOS_0;
+import static com.jbroker.packet.model.bidirectional.impl.PublishPacket.PACKET_IDENTIFIER_LENGTH;
+import static com.jbroker.packet.model.bidirectional.impl.PublishPacket.TOPIC_NAME_START_POSITION;
+import static com.jbroker.packet.model.QosLevel.QOS_0;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.combineBytesToInt;
 import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.PublishFixedHeader;
-import com.jbroker.packet.PublishPacket;
-import com.jbroker.packet.QosLevel;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.header.PublishFixedHeader;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
+import com.jbroker.packet.model.QosLevel;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import com.jbroker.utils.PacketDecodeUtils;
 
-public class PublishPacketDecoder implements MqttPacketDecoder<PublishPacket> {
+public class PublishPacketDecoder implements MqttPacketDecoder {
 
   @Override
   public PublishPacket decode(FixedHeader fixedHeader, byte[] packetBuffer) {

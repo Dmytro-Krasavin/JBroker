@@ -1,10 +1,13 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.outbound.impl;
 
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class SubackPacket extends MqttPacket {
+public class SubackPacket extends AbstractMqttPacket implements ServerToClientPacket {
 
   // Byte positions in the SUBACK packet (counting after Fixed Header bytes)
   public static final int PACKET_IDENTIFIER_START_POSITION = 1;

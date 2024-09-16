@@ -5,7 +5,7 @@ import static com.jbroker.utils.ByteUtils.readUnsignedByte;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
 import static com.jbroker.utils.ByteUtils.toUnsigned;
 
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.MqttPacket;
 import java.util.Arrays;
 import java.util.Objects;
 import lombok.AccessLevel;

@@ -1,10 +1,10 @@
 package com.jbroker.packet.encoder.impl;
 
-import static com.jbroker.packet.ConnackPacket.CONNECT_ACKNOWLEDGE_FLAGS_POSITION;
-import static com.jbroker.packet.ConnackPacket.RETURN_CODE_POSITION;
+import static com.jbroker.packet.model.outbound.impl.ConnackPacket.CONNECT_ACKNOWLEDGE_FLAGS_POSITION;
+import static com.jbroker.packet.model.outbound.impl.ConnackPacket.RETURN_CODE_POSITION;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
 
-import com.jbroker.packet.ConnackPacket;
+import com.jbroker.packet.model.outbound.impl.ConnackPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
 import com.jbroker.utils.ArrayUtils;

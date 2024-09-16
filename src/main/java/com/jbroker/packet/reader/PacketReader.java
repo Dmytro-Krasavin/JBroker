@@ -1,8 +1,8 @@
 package com.jbroker.packet.reader;
 
 import com.jbroker.command.CommandType;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.model.header.FixedHeader;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -26,7 +26,7 @@ public class PacketReader {
   private final UnsubscribePacketDecoder unsubscribeDecoder;
   private final DisconnectPacketDecoder disconnectDecoder;
 
-  public MqttPacket read(int firstByte, InputStream inputStream) throws IOException {
+  public ClientToServerPacket read(int firstByte, InputStream inputStream) throws IOException {
     FixedHeader fixedHeader = fixedHeaderReader.read(firstByte, inputStream);
     byte[] packetBuffer = buildPacketBuffer(inputStream, fixedHeader.getRemainingLength());
 
@@ -45,7 +45,8 @@ public class PacketReader {
     };
   }
 
-  private byte[] buildPacketBuffer(InputStream inputStream, int remainingLength) throws IOException {
+  private byte[] buildPacketBuffer(InputStream inputStream, int remainingLength)
+      throws IOException {
     byte[] packetBuffer = new byte[remainingLength];
     int totalReadBytes = inputStream.read(packetBuffer);
     if (totalReadBytes < remainingLength) {

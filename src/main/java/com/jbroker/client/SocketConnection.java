@@ -3,8 +3,9 @@ package com.jbroker.client;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
-import com.jbroker.packet.ConnectPacket;
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.model.inbound.impl.ConnectPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class SocketConnection implements ClientConnection {
   }
 
   @Override
-  public void sentPacket(MqttPacket outboundPacket) {
+  public void sentPacket(ServerToClientPacket outboundPacket) {
     lock.lock();
     try {
       log.info("Sending {} packet to client '{}'", outboundPacket.getCommandType(), clientId);
@@ -86,8 +87,8 @@ public class SocketConnection implements ClientConnection {
       return false;
     }
 
-    MqttPacket inboundPacket = packetReader.read(firstByte, input);
-    Optional<MqttPacket> outboundPacket = commandDispatcher.dispatchCommand(
+    ClientToServerPacket inboundPacket = packetReader.read(firstByte, input);
+    Optional<ServerToClientPacket> outboundPacket = commandDispatcher.dispatchCommand(
         inboundPacket,
         clientId != null ? clientId : socket.getRemoteSocketAddress().toString()
     );
@@ -120,7 +121,7 @@ public class SocketConnection implements ClientConnection {
     return firstByte == CLIENT_CLOSED_SOCKET_CONNECTION;
   }
 
-  private static boolean didClientCloseMqttConnection(MqttPacket inboundPacket) {
+  private static boolean didClientCloseMqttConnection(ClientToServerPacket inboundPacket) {
     return inboundPacket.getCommandType() == CommandType.DISCONNECT;
   }
 }

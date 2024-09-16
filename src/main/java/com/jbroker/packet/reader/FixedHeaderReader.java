@@ -1,17 +1,17 @@
 package com.jbroker.packet.reader;
 
-import static com.jbroker.packet.PublishFixedHeader.DUPLICATE_FLAG_BIT;
-import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_END_BIT;
-import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_START_BIT;
-import static com.jbroker.packet.PublishFixedHeader.RETAIN_FLAG_BIT;
-import static com.jbroker.packet.SubscribePacket.SUBSCRIBE_FIXED_HEADER_BYTE;
-import static com.jbroker.packet.UnsubscribePacket.UNSUBSCRIBE_FIXED_HEADER_BYTE;
+import static com.jbroker.packet.model.header.PublishFixedHeader.DUPLICATE_FLAG_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.QOS_LEVEL_END_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.QOS_LEVEL_START_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.RETAIN_FLAG_BIT;
+import static com.jbroker.packet.model.inbound.impl.SubscribePacket.SUBSCRIBE_FIXED_HEADER_BYTE;
+import static com.jbroker.packet.model.inbound.impl.UnsubscribePacket.UNSUBSCRIBE_FIXED_HEADER_BYTE;
 
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.MalformedPacketException;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.PublishFixedHeader;
-import com.jbroker.packet.QosLevel;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.header.PublishFixedHeader;
+import com.jbroker.packet.model.QosLevel;
 import com.jbroker.utils.ByteUtils;
 import java.io.IOException;
 import java.io.InputStream;

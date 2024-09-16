@@ -15,14 +15,15 @@ import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
 import com.jbroker.command.handler.impl.UnknownCommandHandler;
 import com.jbroker.command.handler.impl.UnsubscribeHandler;
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class CommandHandlerFactory {
 
-  private final Map<CommandType, CommandHandler<? extends MqttPacket, ? extends MqttPacket>> commandHandlerByCommandType;
-  private final CommandHandler<MqttPacket, MqttPacket> defaultHandler = new UnknownCommandHandler();
+  private final Map<CommandType, CommandHandler<? extends ClientToServerPacket, ? extends ServerToClientPacket>> commandHandlerByCommandType;
+  private final CommandHandler<ClientToServerPacket, ServerToClientPacket> defaultHandler = new UnknownCommandHandler();
 
   private final ConnectHandler connectHandler;
   private final PingReqHandler pingReqHandler;
@@ -49,10 +50,11 @@ public class CommandHandlerFactory {
   }
 
   @SuppressWarnings("unchecked")
-  public <InboundPacket extends MqttPacket, OutboundPacket extends MqttPacket> CommandHandler<InboundPacket, OutboundPacket> getCommandHandler(
+  public CommandHandler<ClientToServerPacket, ServerToClientPacket> getCommandHandler(
       CommandType type) {
-    return (CommandHandler<InboundPacket, OutboundPacket>) commandHandlerByCommandType.getOrDefault(
-        type, defaultHandler
+    return (CommandHandler<ClientToServerPacket, ServerToClientPacket>) commandHandlerByCommandType.getOrDefault(
+        type,
+        defaultHandler
     );
   }
 

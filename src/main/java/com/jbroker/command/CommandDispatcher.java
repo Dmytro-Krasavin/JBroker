@@ -2,7 +2,8 @@ package com.jbroker.command;
 
 import com.jbroker.command.handler.CommandHandler;
 import com.jbroker.command.handler.CommandHandlerFactory;
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,10 @@ public class CommandDispatcher {
 
   private final CommandHandlerFactory commandHandlerFactory;
 
-  public <InboundPacket extends MqttPacket, OutboundPacket extends MqttPacket> Optional<OutboundPacket> dispatchCommand(
-      InboundPacket inboundPacket, String clientId) {
-    CommandHandler<InboundPacket, OutboundPacket> commandHandler = commandHandlerFactory.getCommandHandler(
+  public Optional<ServerToClientPacket> dispatchCommand(
+      ClientToServerPacket inboundPacket,
+      String clientId) {
+    CommandHandler<ClientToServerPacket, ServerToClientPacket> commandHandler = commandHandlerFactory.getCommandHandler(
         inboundPacket.getCommandType()
     );
     log.info("{}: executing {} command", clientId, inboundPacket.getCommandType());

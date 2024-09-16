@@ -1,9 +1,12 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.bidirectional.impl;
 
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.bidirectional.BidirectionalPacket;
+import com.jbroker.packet.model.header.PublishFixedHeader;
 import lombok.Getter;
 
 @Getter
-public class PublishPacket extends MqttPacket {
+public class PublishPacket extends AbstractMqttPacket implements BidirectionalPacket {
 
   // Byte positions in the PUBLISH packet (counting after Fixed Header bytes)
   public static final int TOPIC_NAME_START_POSITION = 1;

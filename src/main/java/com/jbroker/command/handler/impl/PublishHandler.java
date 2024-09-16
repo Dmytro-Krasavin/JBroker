@@ -2,20 +2,22 @@ package com.jbroker.command.handler.impl;
 
 import com.jbroker.command.handler.CommandHandler;
 import com.jbroker.message.queue.MessageQueue;
-import com.jbroker.packet.MqttPacket;
-import com.jbroker.packet.PublishPacket;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class PublishHandler implements CommandHandler<PublishPacket, MqttPacket> {
+public class PublishHandler implements CommandHandler<PublishPacket, ServerToClientPacket> {
 
   private final MessageQueue messageQueue;
 
   @Override
-  public Optional<MqttPacket> handleCommand(PublishPacket publishPacket, String clientId) {
+  public Optional<ServerToClientPacket> handleCommand(
+      PublishPacket publishPacket,
+      String clientId) {
     String topic = publishPacket.getTopicName();
     String applicationMessage = publishPacket.getApplicationMessage();
     log.info("Topic: {}", topic);

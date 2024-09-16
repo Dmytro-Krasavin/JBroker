@@ -1,18 +1,18 @@
 package com.jbroker.packet.decoder.impl;
 
-import static com.jbroker.packet.UnsubscribePacket.PACKET_IDENTIFIER_END_POSITION;
-import static com.jbroker.packet.UnsubscribePacket.PACKET_IDENTIFIER_START_POSITION;
+import static com.jbroker.packet.model.inbound.impl.UnsubscribePacket.PACKET_IDENTIFIER_END_POSITION;
+import static com.jbroker.packet.model.inbound.impl.UnsubscribePacket.PACKET_IDENTIFIER_START_POSITION;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.decodePacketIdentifier;
 import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.UnsubscribePacket;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.inbound.impl.UnsubscribePacket;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import java.util.LinkedList;
 import java.util.List;
 
-public class UnsubscribePacketDecoder implements MqttPacketDecoder<UnsubscribePacket> {
+public class UnsubscribePacketDecoder implements MqttPacketDecoder {
 
   @Override
   public UnsubscribePacket decode(FixedHeader fixedHeader, byte[] packetBuffer) {

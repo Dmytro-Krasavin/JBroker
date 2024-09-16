@@ -1,6 +1,6 @@
 package com.jbroker.client;
 
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +19,7 @@ public class ClientConnectionRegistry {
     clientConnectionBySocketAddressMap.remove(socketAddress);
   }
 
-  public void sendPacket(String clientId, MqttPacket outboundPacket) {
+  public void sendPacket(String clientId, ServerToClientPacket outboundPacket) {
     clientConnectionBySocketAddressMap.values().stream()
         .filter(clientConnection -> Objects.nonNull(clientConnection.getClientId()))
         .filter(clientConnection -> clientId.equals(clientConnection.getClientId()))

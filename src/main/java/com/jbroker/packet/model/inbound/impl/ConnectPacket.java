@@ -1,10 +1,13 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.inbound.impl;
 
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ConnectPacket extends MqttPacket {
+public class ConnectPacket extends AbstractMqttPacket implements ClientToServerPacket {
 
   // Byte positions in the CONNECT packet (counting after Fixed Header bytes)
   public static final int PROTOCOL_NAME_START_POSITION = 1;

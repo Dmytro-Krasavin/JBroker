@@ -1,7 +1,8 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.header;
 
 import static com.jbroker.command.CommandType.PUBLISH;
 
+import com.jbroker.packet.model.QosLevel;
 import lombok.Getter;
 
 @Getter

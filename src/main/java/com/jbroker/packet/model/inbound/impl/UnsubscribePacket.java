@@ -1,10 +1,13 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.inbound.impl;
 
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
 import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class UnsubscribePacket extends MqttPacket {
+public class UnsubscribePacket extends AbstractMqttPacket implements ClientToServerPacket {
 
   /**
    * From MQTT specification: <i>Bits 3,2,1 and 0 of the fixed header of the UNSUBSCRIBE Control

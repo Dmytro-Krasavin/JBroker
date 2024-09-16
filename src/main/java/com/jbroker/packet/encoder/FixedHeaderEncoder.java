@@ -1,18 +1,18 @@
 package com.jbroker.packet.encoder;
 
-import static com.jbroker.packet.FixedHeader.CONTROL_PACKET_TYPE_POSITION;
-import static com.jbroker.packet.FixedHeader.REMAINING_LENGTH_START_POSITION;
-import static com.jbroker.packet.PublishFixedHeader.DUPLICATE_FLAG_BIT;
-import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_END_BIT;
-import static com.jbroker.packet.PublishFixedHeader.QOS_LEVEL_START_BIT;
-import static com.jbroker.packet.PublishFixedHeader.RETAIN_FLAG_BIT;
+import static com.jbroker.packet.model.header.FixedHeader.CONTROL_PACKET_TYPE_POSITION;
+import static com.jbroker.packet.model.header.FixedHeader.REMAINING_LENGTH_START_POSITION;
+import static com.jbroker.packet.model.header.PublishFixedHeader.DUPLICATE_FLAG_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.QOS_LEVEL_END_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.QOS_LEVEL_START_BIT;
+import static com.jbroker.packet.model.header.PublishFixedHeader.RETAIN_FLAG_BIT;
 import static com.jbroker.utils.ByteUtils.modifyBit;
 import static com.jbroker.utils.ByteUtils.toArrayIndex;
 
 import com.jbroker.command.CommandType;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.PublishFixedHeader;
-import com.jbroker.packet.QosLevel;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.header.PublishFixedHeader;
+import com.jbroker.packet.model.QosLevel;
 import com.jbroker.utils.ArrayUtils;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.jbroker.message.queue;
 
-import com.jbroker.packet.PublishPacket;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
 
 public interface MessageQueue {
 

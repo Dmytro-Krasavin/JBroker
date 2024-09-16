@@ -1,19 +1,17 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model;
 
 import com.jbroker.command.CommandType;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import com.jbroker.packet.model.header.FixedHeader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class MqttPacket {
-
-  public static final Charset TEXT_FIELD_ENCODING = StandardCharsets.UTF_8;
+public abstract class AbstractMqttPacket implements MqttPacket {
 
   private final FixedHeader fixedHeader;
 
+  @Override
   public CommandType getCommandType() {
     return fixedHeader.getCommandType();
   }

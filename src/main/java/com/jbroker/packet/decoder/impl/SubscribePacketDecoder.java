@@ -1,23 +1,23 @@
 package com.jbroker.packet.decoder.impl;
 
-import static com.jbroker.packet.SubscribePacket.PACKET_IDENTIFIER_END_POSITION;
-import static com.jbroker.packet.SubscribePacket.REQUESTED_QOS_END_BIT;
-import static com.jbroker.packet.SubscribePacket.REQUESTED_QOS_START_BIT;
+import static com.jbroker.packet.model.inbound.impl.SubscribePacket.PACKET_IDENTIFIER_END_POSITION;
+import static com.jbroker.packet.model.inbound.impl.SubscribePacket.REQUESTED_QOS_END_BIT;
+import static com.jbroker.packet.model.inbound.impl.SubscribePacket.REQUESTED_QOS_START_BIT;
 import static com.jbroker.utils.ByteUtils.combineBits;
 import static com.jbroker.utils.ByteUtils.readByte;
 import static com.jbroker.utils.PacketDecodeUtils.calculateStartBytePosition;
 import static com.jbroker.utils.PacketDecodeUtils.decodePacketIdentifier;
 import static com.jbroker.utils.PacketDecodeUtils.readTextField;
 
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.QosLevel;
-import com.jbroker.packet.SubscribePacket;
-import com.jbroker.packet.UnsubscribePacket;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.QosLevel;
+import com.jbroker.packet.model.inbound.impl.SubscribePacket;
+import com.jbroker.packet.model.inbound.impl.UnsubscribePacket;
 import com.jbroker.packet.decoder.MqttPacketDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class SubscribePacketDecoder implements MqttPacketDecoder<SubscribePacket> {
+public class SubscribePacketDecoder implements MqttPacketDecoder {
 
   @Override
   public SubscribePacket decode(FixedHeader fixedHeader, byte[] packetBuffer) {

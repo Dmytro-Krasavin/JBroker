@@ -1,10 +1,14 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.inbound.impl;
 
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.QosLevel;
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
 import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class SubscribePacket extends MqttPacket {
+public class SubscribePacket extends AbstractMqttPacket implements ClientToServerPacket {
 
   /**
    * From MQTT specification: <i>Bits 3,2,1 and 0 of the fixed header of the SUBSCRIBE Control

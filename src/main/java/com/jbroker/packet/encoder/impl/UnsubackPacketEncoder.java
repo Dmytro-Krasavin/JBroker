@@ -2,7 +2,7 @@ package com.jbroker.packet.encoder.impl;
 
 import static com.jbroker.utils.PacketEncodeUtils.encodePacketIdentifier;
 
-import com.jbroker.packet.UnsubackPacket;
+import com.jbroker.packet.model.outbound.impl.UnsubackPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
 import com.jbroker.utils.ArrayUtils;

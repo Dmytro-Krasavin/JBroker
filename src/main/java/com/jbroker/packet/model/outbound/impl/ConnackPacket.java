@@ -1,9 +1,12 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.outbound.impl;
 
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.AbstractMqttPacket;
+import com.jbroker.packet.model.outbound.ServerToClientPacket;
 import lombok.Getter;
 
 @Getter
-public class ConnackPacket extends MqttPacket {
+public class ConnackPacket extends AbstractMqttPacket implements ServerToClientPacket {
 
   // CONNACK is a fixed four-byte packet (2 for fixed header and 2 for variable header)
   public static final byte CONNACK_REMAINING_LENGTH = 2;

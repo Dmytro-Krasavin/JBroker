@@ -2,8 +2,8 @@ package com.jbroker.packet.encoder.impl;
 
 import static com.jbroker.utils.PacketEncodeUtils.encodePacketIdentifier;
 
-import com.jbroker.packet.SubackPacket;
-import com.jbroker.packet.SubackPacket.SubackReturnCode;
+import com.jbroker.packet.model.outbound.impl.SubackPacket;
+import com.jbroker.packet.model.outbound.impl.SubackPacket.SubackReturnCode;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
 import com.jbroker.utils.ArrayUtils;

@@ -1,4 +1,4 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model.header;
 
 import com.jbroker.command.CommandType;
 import lombok.Getter;

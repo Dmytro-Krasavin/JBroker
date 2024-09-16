@@ -1,9 +1,9 @@
 package com.jbroker.packet.decoder;
 
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.MqttPacket;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.model.header.FixedHeader;
 
-public interface MqttPacketDecoder<InboundPacket extends MqttPacket> {
+public interface MqttPacketDecoder {
 
-  InboundPacket decode(FixedHeader fixedHeader, byte[] packetBuffer);
+  ClientToServerPacket decode(FixedHeader fixedHeader, byte[] packetBuffer);
 }

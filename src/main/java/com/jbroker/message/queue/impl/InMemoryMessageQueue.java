@@ -1,7 +1,7 @@
 package com.jbroker.message.queue.impl;
 
 import com.jbroker.message.queue.MessageQueue;
-import com.jbroker.packet.PublishPacket;
+import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

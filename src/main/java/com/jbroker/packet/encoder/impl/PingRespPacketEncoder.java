@@ -1,6 +1,6 @@
 package com.jbroker.packet.encoder.impl;
 
-import com.jbroker.packet.PingRespPacket;
+import com.jbroker.packet.model.outbound.impl.PingRespPacket;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
 import com.jbroker.packet.encoder.MqttPacketEncoder;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
 package com.jbroker.command.handler.impl;
 
 import static com.jbroker.command.CommandType.UNSUBACK;
-import static com.jbroker.packet.UnsubackPacket.UNSUBACK_REMAINING_LENGTH;
+import static com.jbroker.packet.model.outbound.impl.UnsubackPacket.UNSUBACK_REMAINING_LENGTH;
 
 import com.jbroker.command.handler.CommandHandler;
-import com.jbroker.packet.FixedHeader;
-import com.jbroker.packet.UnsubackPacket;
-import com.jbroker.packet.UnsubscribePacket;
+import com.jbroker.packet.model.header.FixedHeader;
+import com.jbroker.packet.model.outbound.impl.UnsubackPacket;
+import com.jbroker.packet.model.inbound.impl.UnsubscribePacket;
 import com.jbroker.subscription.SubscriptionRegistry;
 import java.util.Arrays;
 import java.util.List;

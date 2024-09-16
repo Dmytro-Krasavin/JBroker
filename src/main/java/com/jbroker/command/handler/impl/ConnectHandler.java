@@ -1,13 +1,13 @@
 package com.jbroker.command.handler.impl;
 
 import static com.jbroker.command.CommandType.CONNACK;
-import static com.jbroker.packet.ConnackPacket.CONNACK_REMAINING_LENGTH;
+import static com.jbroker.packet.model.outbound.impl.ConnackPacket.CONNACK_REMAINING_LENGTH;
 
 import com.jbroker.command.handler.CommandHandler;
-import com.jbroker.packet.ConnackPacket;
-import com.jbroker.packet.ConnackPacket.ConnectReturnCode;
-import com.jbroker.packet.ConnectPacket;
-import com.jbroker.packet.FixedHeader;
+import com.jbroker.packet.model.outbound.impl.ConnackPacket;
+import com.jbroker.packet.model.outbound.impl.ConnackPacket.ConnectReturnCode;
+import com.jbroker.packet.model.inbound.impl.ConnectPacket;
+import com.jbroker.packet.model.header.FixedHeader;
 import java.util.Optional;
 
 public class ConnectHandler implements CommandHandler<ConnectPacket, ConnackPacket> {

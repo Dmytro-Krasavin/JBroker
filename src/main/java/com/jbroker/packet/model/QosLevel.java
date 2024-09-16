@@ -1,4 +1,4 @@
-package com.jbroker.packet;
+package com.jbroker.packet.model;
 
 import java.util.Arrays;
 import lombok.Getter;
