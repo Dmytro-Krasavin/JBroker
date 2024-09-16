@@ -1,7 +1,7 @@
 package com.jbroker.command.handler.impl;
 
 import com.jbroker.command.handler.CommandHandler;
-import com.jbroker.message.MessageQueue;
+import com.jbroker.message.queue.MessageQueue;
 import com.jbroker.packet.MqttPacket;
 import com.jbroker.packet.PublishPacket;
 import java.util.Optional;

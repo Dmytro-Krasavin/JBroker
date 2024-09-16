@@ -18,7 +18,7 @@ public class ClientConnectionManager {
 
   public ClientConnection createClientConnection(Socket clientSocket) throws IOException {
     SocketAddress clientSocketAddress = clientSocket.getRemoteSocketAddress();
-    ClientConnection clientConnection = new ClientConnection(
+    ClientConnection clientConnection = new SocketConnection(
         clientSocket,
         packetReader,
         packetWriter,

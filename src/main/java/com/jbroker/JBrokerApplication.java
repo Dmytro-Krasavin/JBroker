@@ -2,7 +2,6 @@ package com.jbroker;
 
 import com.jbroker.client.ClientConnectionManager;
 import com.jbroker.client.ClientConnectionRegistry;
-import com.jbroker.client.ClientPublisher;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.handler.CommandHandlerFactory;
 import com.jbroker.command.handler.impl.ConnectHandler;
@@ -11,7 +10,10 @@ import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
 import com.jbroker.command.handler.impl.UnsubscribeHandler;
-import com.jbroker.message.MessageQueue;
+import com.jbroker.message.queue.impl.InMemoryMessageQueue;
+import com.jbroker.message.MessagePublisher;
+import com.jbroker.message.queue.MessageQueue;
+import com.jbroker.message.queue.MessageQueueProcessor;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -29,7 +31,7 @@ import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
 import com.jbroker.subscription.SubscriptionRegistry;
 
-public class Main {
+public class JBrokerApplication {
 
   private static final int BROKER_PORT = 1885;
 
@@ -37,11 +39,15 @@ public class Main {
     SubscriptionRegistry subscriptionRegistry = new SubscriptionRegistry();
     ClientConnectionRegistry clientConnectionRegistry = new ClientConnectionRegistry();
     FixedHeaderEncoder fixedHeaderEncoder = new FixedHeaderEncoder();
-    ClientPublisher clientPublisher = new ClientPublisher(
+    MessagePublisher messagePublisher = new MessagePublisher(
         subscriptionRegistry,
         clientConnectionRegistry
     );
-    MessageQueue messageQueue = new MessageQueue(clientPublisher);
+    MessageQueue messageQueue = messageQueue();
+    MessageQueueProcessor messageQueueProcessor = new MessageQueueProcessor(
+        messageQueue,
+        messagePublisher
+    );
     Broker broker = new Broker(
         new ClientConnectionManager(
             new PacketReader(
@@ -72,8 +78,12 @@ public class Main {
             ),
             clientConnectionRegistry
         ),
-        messageQueue
+        messageQueueProcessor
     );
     broker.run(BROKER_PORT);
+  }
+
+  private static MessageQueue messageQueue() {
+    return new InMemoryMessageQueue();
   }
 }
