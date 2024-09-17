@@ -7,7 +7,7 @@ import com.jbroker.command.handler.CommandHandler;
 import com.jbroker.packet.model.header.FixedHeader;
 import com.jbroker.packet.model.outbound.impl.UnsubackPacket;
 import com.jbroker.packet.model.inbound.impl.UnsubscribePacket;
-import com.jbroker.subscription.SubscriptionRegistry;
+import com.jbroker.subscription.registry.SubscriptionRegistry;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

@@ -1,15 +1,21 @@
-package com.jbroker.subscription;
+package com.jbroker.subscription.registry.impl;
 
 
+import com.jbroker.message.topic.TopicFilter;
+import com.jbroker.subscription.Subscriber;
+import com.jbroker.subscription.registry.SubscriptionRegistry;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import lombok.RequiredArgsConstructor;
 
-public class SubscriptionRegistry {
+@RequiredArgsConstructor
+public class InMemorySubscriptionRegistry implements SubscriptionRegistry {
 
+  private final TopicFilter topicFilter;
   private final ConcurrentMap<String, Set<Subscriber>> subscribersByTopic = new ConcurrentHashMap<>();
 
   public void subscribe(String topic, Subscriber subscriber) {
@@ -27,28 +33,13 @@ public class SubscriptionRegistry {
     }
   }
 
-  public List<Subscriber> getSubscribersForTopic(String topic) {
+  public List<Subscriber> getSubscribers(String topic) {
     List<Subscriber> matchingSubscribers = new ArrayList<>();
     subscribersByTopic.forEach((subscribedTopic, subscribers) -> {
-      if (isTopicMatching(subscribedTopic, topic)) {
+      if (topicFilter.isTopicMatching(subscribedTopic, topic)) {
         matchingSubscribers.addAll(subscribers);
       }
     });
     return matchingSubscribers;
-  }
-
-  private boolean isTopicMatching(String subscribedTopic, String publishTopic) {
-    String[] subscribedLevels = subscribedTopic.split("/");
-    String[] publishLevels = publishTopic.split("/");
-    for (int i = 0; i < subscribedLevels.length; i++) {
-      if (subscribedLevels[i].equals("#")) {
-        return true; // multi-level wildcard '#' matches anything
-      }
-
-      if (!subscribedLevels[i].equals("+") && !subscribedLevels[i].equals(publishLevels[i])) {
-        return false; // mismatch
-      }
-    }
-    return subscribedLevels.length == publishLevels.length; // Exact match
   }
 }

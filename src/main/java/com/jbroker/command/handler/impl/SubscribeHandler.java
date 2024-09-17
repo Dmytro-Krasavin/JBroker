@@ -9,7 +9,7 @@ import com.jbroker.packet.model.outbound.impl.SubackPacket;
 import com.jbroker.packet.model.outbound.impl.SubackPacket.SubackReturnCode;
 import com.jbroker.packet.model.inbound.impl.SubscribePacket;
 import com.jbroker.subscription.Subscriber;
-import com.jbroker.subscription.SubscriptionRegistry;
+import com.jbroker.subscription.registry.SubscriptionRegistry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;

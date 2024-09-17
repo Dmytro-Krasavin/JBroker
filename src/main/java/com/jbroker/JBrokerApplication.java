@@ -10,10 +10,11 @@ import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
 import com.jbroker.command.handler.impl.UnsubscribeHandler;
-import com.jbroker.message.queue.impl.InMemoryMessageQueue;
 import com.jbroker.message.MessagePublisher;
 import com.jbroker.message.queue.MessageQueue;
 import com.jbroker.message.queue.MessageQueueProcessor;
+import com.jbroker.message.queue.impl.InMemoryMessageQueue;
+import com.jbroker.message.topic.TopicFilter;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -29,25 +30,27 @@ import com.jbroker.packet.encoder.impl.UnsubackPacketEncoder;
 import com.jbroker.packet.reader.FixedHeaderReader;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
-import com.jbroker.subscription.SubscriptionRegistry;
+import com.jbroker.subscription.registry.SubscriptionRegistry;
+import com.jbroker.subscription.registry.impl.InMemorySubscriptionRegistry;
 
 public class JBrokerApplication {
 
   private static final int BROKER_PORT = 1885;
 
   public static void main(String[] args) {
-    SubscriptionRegistry subscriptionRegistry = new SubscriptionRegistry();
-    ClientConnectionRegistry clientConnectionRegistry = new ClientConnectionRegistry();
-    FixedHeaderEncoder fixedHeaderEncoder = new FixedHeaderEncoder();
-    MessagePublisher messagePublisher = new MessagePublisher(
-        subscriptionRegistry,
-        clientConnectionRegistry
+    SubscriptionRegistry subscriptionRegistry = subscriptionRegistry(
+        new TopicFilter()
     );
+    ClientConnectionRegistry clientConnectionRegistry = new ClientConnectionRegistry();
     MessageQueue messageQueue = messageQueue();
     MessageQueueProcessor messageQueueProcessor = new MessageQueueProcessor(
         messageQueue,
-        messagePublisher
+        new MessagePublisher(
+            subscriptionRegistry,
+            clientConnectionRegistry
+        )
     );
+    FixedHeaderEncoder fixedHeaderEncoder = new FixedHeaderEncoder();
     Broker broker = new Broker(
         new ClientConnectionManager(
             new PacketReader(
@@ -81,6 +84,10 @@ public class JBrokerApplication {
         messageQueueProcessor
     );
     broker.run(BROKER_PORT);
+  }
+
+  private static SubscriptionRegistry subscriptionRegistry(TopicFilter topicFilter) {
+    return new InMemorySubscriptionRegistry(topicFilter);
   }
 
   private static MessageQueue messageQueue() {
