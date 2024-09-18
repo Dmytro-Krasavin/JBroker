@@ -1,7 +1,5 @@
 package com.jbroker;
 
-import com.jbroker.client.ClientConnectionManager;
-import com.jbroker.client.ClientConnectionRegistry;
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.handler.CommandHandlerFactory;
 import com.jbroker.command.handler.impl.ConnectHandler;
@@ -10,11 +8,15 @@ import com.jbroker.command.handler.impl.PingReqHandler;
 import com.jbroker.command.handler.impl.PublishHandler;
 import com.jbroker.command.handler.impl.SubscribeHandler;
 import com.jbroker.command.handler.impl.UnsubscribeHandler;
+import com.jbroker.connection.ClientConnectionManager;
+import com.jbroker.connection.registry.ClientConnectionRegistry;
+import com.jbroker.connection.registry.impl.InMemoryClientConnectionRegistry;
 import com.jbroker.message.MessagePublisher;
 import com.jbroker.message.queue.MessageQueue;
 import com.jbroker.message.queue.MessageQueueProcessor;
 import com.jbroker.message.queue.impl.InMemoryMessageQueue;
 import com.jbroker.message.topic.TopicFilter;
+import com.jbroker.packet.decoder.PacketDecoderFactory;
 import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
 import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
@@ -22,6 +24,7 @@ import com.jbroker.packet.decoder.impl.PublishPacketDecoder;
 import com.jbroker.packet.decoder.impl.SubscribePacketDecoder;
 import com.jbroker.packet.decoder.impl.UnsubscribePacketDecoder;
 import com.jbroker.packet.encoder.FixedHeaderEncoder;
+import com.jbroker.packet.encoder.PacketEncoderFactory;
 import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
 import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
 import com.jbroker.packet.encoder.impl.PublishPacketEncoder;
@@ -38,10 +41,10 @@ public class JBrokerApplication {
   private static final int BROKER_PORT = 1885;
 
   public static void main(String[] args) {
+    ClientConnectionRegistry clientConnectionRegistry = clientConnectionRegistry();
     SubscriptionRegistry subscriptionRegistry = subscriptionRegistry(
         new TopicFilter()
     );
-    ClientConnectionRegistry clientConnectionRegistry = new ClientConnectionRegistry();
     MessageQueue messageQueue = messageQueue();
     MessageQueueProcessor messageQueueProcessor = new MessageQueueProcessor(
         messageQueue,
@@ -55,19 +58,23 @@ public class JBrokerApplication {
         new ClientConnectionManager(
             new PacketReader(
                 new FixedHeaderReader(),
-                new ConnectPacketDecoder(),
-                new PingReqPacketDecoder(),
-                new PublishPacketDecoder(),
-                new SubscribePacketDecoder(),
-                new UnsubscribePacketDecoder(),
-                new DisconnectPacketDecoder()
+                new PacketDecoderFactory(
+                    new ConnectPacketDecoder(),
+                    new PingReqPacketDecoder(),
+                    new PublishPacketDecoder(),
+                    new SubscribePacketDecoder(),
+                    new UnsubscribePacketDecoder(),
+                    new DisconnectPacketDecoder()
+                )
             ),
             new PacketWriter(
-                new ConnackPacketEncoder(fixedHeaderEncoder),
-                new PingRespPacketEncoder(fixedHeaderEncoder),
-                new SubackPacketEncoder(fixedHeaderEncoder),
-                new UnsubackPacketEncoder(fixedHeaderEncoder),
-                new PublishPacketEncoder(fixedHeaderEncoder)
+                new PacketEncoderFactory(
+                    new ConnackPacketEncoder(fixedHeaderEncoder),
+                    new PingRespPacketEncoder(fixedHeaderEncoder),
+                    new SubackPacketEncoder(fixedHeaderEncoder),
+                    new UnsubackPacketEncoder(fixedHeaderEncoder),
+                    new PublishPacketEncoder(fixedHeaderEncoder)
+                )
             ),
             new CommandDispatcher(
                 new CommandHandlerFactory(
@@ -76,7 +83,7 @@ public class JBrokerApplication {
                     new PublishHandler(messageQueue),
                     new SubscribeHandler(subscriptionRegistry),
                     new UnsubscribeHandler(subscriptionRegistry),
-                    new DisconnectHandler()
+                    new DisconnectHandler(clientConnectionRegistry)
                 )
             ),
             clientConnectionRegistry
@@ -84,6 +91,10 @@ public class JBrokerApplication {
         messageQueueProcessor
     );
     broker.run(BROKER_PORT);
+  }
+
+  private static ClientConnectionRegistry clientConnectionRegistry() {
+    return new InMemoryClientConnectionRegistry();
   }
 
   private static SubscriptionRegistry subscriptionRegistry(TopicFilter topicFilter) {

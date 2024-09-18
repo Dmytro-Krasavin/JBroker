@@ -12,9 +12,13 @@ public class MessageQueueProcessor implements Runnable {
   @Override
   public void run() {
     while (true) {
-      while (messageQueue.hasMessages()) {
-        messagePublisher.publish(messageQueue.poll());
-      }
+      publishQueuedMessages();
+    }
+  }
+
+  private void publishQueuedMessages() {
+    while (messageQueue.hasMessages()) {
+      messagePublisher.publish(messageQueue.poll());
     }
   }
 }

@@ -1,6 +1,6 @@
 package com.jbroker.message;
 
-import com.jbroker.client.ClientConnectionRegistry;
+import com.jbroker.connection.registry.ClientConnectionRegistry;
 import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
 import com.jbroker.subscription.registry.SubscriptionRegistry;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.jbroker;
 
-import com.jbroker.client.ClientConnection;
-import com.jbroker.client.ClientConnectionManager;
+import com.jbroker.connection.ClientConnection;
+import com.jbroker.connection.ClientConnectionManager;
 import com.jbroker.message.queue.MessageQueueProcessor;
 import java.io.IOException;
 import java.net.ServerSocket;

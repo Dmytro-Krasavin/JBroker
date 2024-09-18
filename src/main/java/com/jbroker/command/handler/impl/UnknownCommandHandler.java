@@ -14,7 +14,7 @@ public class UnknownCommandHandler implements
   public Optional<ServerToClientPacket> handleCommand(
       ClientToServerPacket inboundPacket,
       String clientId) {
-    log.error("Unknown command received! Command type: {}", inboundPacket.getCommandType());
+    log.warn("Unknown command received! Command type: {}", inboundPacket.getCommandType());
     return Optional.empty();
   }
 }

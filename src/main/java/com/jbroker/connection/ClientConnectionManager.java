@@ -1,6 +1,7 @@
-package com.jbroker.client;
+package com.jbroker.connection;
 
 import com.jbroker.command.CommandDispatcher;
+import com.jbroker.connection.registry.ClientConnectionRegistry;
 import com.jbroker.packet.reader.PacketReader;
 import com.jbroker.packet.writer.PacketWriter;
 import java.io.IOException;
@@ -22,14 +23,9 @@ public class ClientConnectionManager {
         clientSocket,
         packetReader,
         packetWriter,
-        commandDispatcher,
-        onCloseConnectionCallback(clientSocketAddress)
+        commandDispatcher
     );
     clientConnectionRegistry.addClientConnection(clientSocketAddress, clientConnection);
     return clientConnection;
-  }
-
-  private Runnable onCloseConnectionCallback(SocketAddress clientSocketAddress) {
-    return () -> clientConnectionRegistry.removeClientConnection(clientSocketAddress);
   }
 }

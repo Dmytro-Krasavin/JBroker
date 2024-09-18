@@ -1,4 +1,4 @@
-package com.jbroker.client;
+package com.jbroker.connection;
 
 import com.jbroker.command.CommandDispatcher;
 import com.jbroker.command.CommandType;
@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,24 +29,21 @@ public class SocketConnection implements ClientConnection {
   private final PacketReader packetReader;
   private final PacketWriter packetWriter;
   private final CommandDispatcher commandDispatcher;
-  private final Runnable onCloseConnectionCallback;
   private final Lock lock = new ReentrantLock();
 
   @Getter
-  private String clientId;
+  private String mqttClientId;
 
   public SocketConnection(
       Socket socket,
       PacketReader packetReader,
       PacketWriter packetWriter,
-      CommandDispatcher commandDispatcher,
-      Runnable onCloseConnectionCallback) throws IOException {
+      CommandDispatcher commandDispatcher) throws IOException {
     this.socket = socket;
     this.outputStream = socket.getOutputStream();
     this.packetReader = packetReader;
     this.packetWriter = packetWriter;
     this.commandDispatcher = commandDispatcher;
-    this.onCloseConnectionCallback = onCloseConnectionCallback;
   }
 
   @SuppressWarnings("StatementWithEmptyBody")
@@ -70,11 +68,16 @@ public class SocketConnection implements ClientConnection {
   public void sentPacket(ServerToClientPacket outboundPacket) {
     lock.lock();
     try {
-      log.info("Sending {} packet to client '{}'", outboundPacket.getCommandType(), clientId);
+      log.info("Sending {} packet to client '{}'", outboundPacket.getCommandType(), mqttClientId);
       packetWriter.write(outputStream, outboundPacket);
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override
+  public SocketAddress getSocketAddress() {
+    return socket.getRemoteSocketAddress();
   }
 
   private boolean listenForIncomingPackets(InputStream input)
@@ -90,18 +93,18 @@ public class SocketConnection implements ClientConnection {
     ClientToServerPacket inboundPacket = packetReader.read(firstByte, input);
     Optional<ServerToClientPacket> outboundPacket = commandDispatcher.dispatchCommand(
         inboundPacket,
-        clientId != null ? clientId : socket.getRemoteSocketAddress().toString()
+        mqttClientId != null ? mqttClientId : socket.getRemoteSocketAddress().toString()
     );
     outboundPacket.ifPresent(this::sentPacket);
 
-    if (clientId == null && inboundPacket instanceof ConnectPacket connectPacket) {
-      clientId = connectPacket.getClientId();
-      log.info("New MQTT connection! Client id: '{}'", clientId);
+    if (mqttClientId == null && inboundPacket instanceof ConnectPacket connectPacket) {
+      mqttClientId = connectPacket.getClientId();
+      log.info("New MQTT connection! Client id: '{}'", mqttClientId);
     }
 
     boolean clientClosedMqttConnection = didClientCloseMqttConnection(inboundPacket);
     if (clientClosedMqttConnection) {
-      log.info("{}: Client closed MQTT connection!", clientId);
+      log.info("{}: Client closed MQTT connection!", mqttClientId);
       return false;
     }
     return true;
@@ -114,7 +117,6 @@ public class SocketConnection implements ClientConnection {
     } catch (IOException e) {
       log.error("IOException occurred while closing socket: {}", e.getMessage());
     }
-    onCloseConnectionCallback.run();
   }
 
   private boolean didClientCloseSocketConnection(int firstByte) {
