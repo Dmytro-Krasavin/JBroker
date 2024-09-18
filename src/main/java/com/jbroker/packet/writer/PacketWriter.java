@@ -2,17 +2,9 @@ package com.jbroker.packet.writer;
 
 import com.jbroker.command.CommandType;
 import com.jbroker.exception.PacketSendFailedException;
-import com.jbroker.packet.model.outbound.impl.ConnackPacket;
-import com.jbroker.packet.model.outbound.impl.PingRespPacket;
-import com.jbroker.packet.model.bidirectional.impl.PublishPacket;
+import com.jbroker.packet.encoder.MqttPacketEncoder;
+import com.jbroker.packet.encoder.PacketEncoderFactory;
 import com.jbroker.packet.model.outbound.ServerToClientPacket;
-import com.jbroker.packet.model.outbound.impl.SubackPacket;
-import com.jbroker.packet.model.outbound.impl.UnsubackPacket;
-import com.jbroker.packet.encoder.impl.ConnackPacketEncoder;
-import com.jbroker.packet.encoder.impl.PingRespPacketEncoder;
-import com.jbroker.packet.encoder.impl.PublishPacketEncoder;
-import com.jbroker.packet.encoder.impl.SubackPacketEncoder;
-import com.jbroker.packet.encoder.impl.UnsubackPacketEncoder;
 import java.io.IOException;
 import java.io.OutputStream;
 import lombok.RequiredArgsConstructor;
@@ -22,24 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PacketWriter {
 
-  private final ConnackPacketEncoder connackEncoder;
-  private final PingRespPacketEncoder pingRespEncoder;
-  private final SubackPacketEncoder subackEncoder;
-  private final UnsubackPacketEncoder unsubackEncoder;
-  private final PublishPacketEncoder publishEncoder;
+  private final PacketEncoderFactory packetEncoderFactory;
 
+  @SuppressWarnings("unchecked")
   public void write(OutputStream outputStream, ServerToClientPacket outboundPacket) {
     CommandType commandType = outboundPacket.getCommandType();
-    byte[] encodedPacket = switch (commandType) {
-      case CONNACK -> connackEncoder.encode((ConnackPacket) outboundPacket);
-      case PINGRESP -> pingRespEncoder.encode((PingRespPacket) outboundPacket);
-      case SUBACK -> subackEncoder.encode((SubackPacket) outboundPacket);
-      case UNSUBACK -> unsubackEncoder.encode((UnsubackPacket) outboundPacket);
-      case PUBLISH -> publishEncoder.encode((PublishPacket) outboundPacket);
-      default -> throw new IllegalArgumentException(
-          "Could not find applicable packet decoder for command type: " + commandType.name());
-    };
+    MqttPacketEncoder<ServerToClientPacket> packetEncoder = packetEncoderFactory.getPacketEncoder(
+        commandType);
+    byte[] encodedPacket = packetEncoder.encode(outboundPacket);
     sendPacket(outputStream, encodedPacket, commandType);
+
     log.info("{} packet sent to client", commandType.name());
   }
 

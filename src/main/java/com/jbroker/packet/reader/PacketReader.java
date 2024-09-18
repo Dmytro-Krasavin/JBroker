@@ -1,14 +1,10 @@
 package com.jbroker.packet.reader;
 
 import com.jbroker.command.CommandType;
-import com.jbroker.packet.model.inbound.ClientToServerPacket;
+import com.jbroker.packet.decoder.MqttPacketDecoder;
+import com.jbroker.packet.decoder.PacketDecoderFactory;
 import com.jbroker.packet.model.header.FixedHeader;
-import com.jbroker.packet.decoder.impl.ConnectPacketDecoder;
-import com.jbroker.packet.decoder.impl.DisconnectPacketDecoder;
-import com.jbroker.packet.decoder.impl.PingReqPacketDecoder;
-import com.jbroker.packet.decoder.impl.PublishPacketDecoder;
-import com.jbroker.packet.decoder.impl.SubscribePacketDecoder;
-import com.jbroker.packet.decoder.impl.UnsubscribePacketDecoder;
+import com.jbroker.packet.model.inbound.ClientToServerPacket;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PacketReader {
 
   private final FixedHeaderReader fixedHeaderReader;
-  private final ConnectPacketDecoder connectDecoder;
-  private final PingReqPacketDecoder pingReqDecoder;
-  private final PublishPacketDecoder publishDecoder;
-  private final SubscribePacketDecoder subscribeDecoder;
-  private final UnsubscribePacketDecoder unsubscribeDecoder;
-  private final DisconnectPacketDecoder disconnectDecoder;
+  private final PacketDecoderFactory packetDecoderFactory;
 
   public ClientToServerPacket read(int firstByte, InputStream inputStream) throws IOException {
     FixedHeader fixedHeader = fixedHeaderReader.read(firstByte, inputStream);
@@ -33,16 +24,8 @@ public class PacketReader {
     CommandType commandType = fixedHeader.getCommandType();
     log.info("{} packet received from client", commandType.name());
 
-    return switch (commandType) {
-      case CONNECT -> connectDecoder.decode(fixedHeader, packetBuffer);
-      case PINGREQ -> pingReqDecoder.decode(fixedHeader, packetBuffer);
-      case PUBLISH -> publishDecoder.decode(fixedHeader, packetBuffer);
-      case SUBSCRIBE -> subscribeDecoder.decode(fixedHeader, packetBuffer);
-      case UNSUBSCRIBE -> unsubscribeDecoder.decode(fixedHeader, packetBuffer);
-      case DISCONNECT -> disconnectDecoder.decode(fixedHeader, packetBuffer);
-      default -> throw new IllegalArgumentException(
-          "Could not find applicable packet encoder for command type: " + commandType.name());
-    };
+    MqttPacketDecoder packetDecoder = packetDecoderFactory.getPacketDecoder(commandType);
+    return packetDecoder.decode(fixedHeader, packetBuffer);
   }
 
   private byte[] buildPacketBuffer(InputStream inputStream, int remainingLength)
