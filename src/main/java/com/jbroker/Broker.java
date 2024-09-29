@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Broker {
 
-  public static final int DEFAULT_MQTT_BROKER_PORT = 1884;
+  public static final int DEFAULT_MQTT_BROKER_PORT = 1883;
 
   private final ClientConnectionManager clientConnectionManager;
   private final MessageQueueProcessor messageQueueProcessor;
