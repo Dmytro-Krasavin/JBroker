@@ -38,8 +38,6 @@ import com.jbroker.subscription.registry.impl.InMemorySubscriptionRegistry;
 
 public class JBrokerApplication {
 
-  private static final int BROKER_PORT = 1885;
-
   public static void main(String[] args) {
     ClientConnectionRegistry clientConnectionRegistry = clientConnectionRegistry();
     SubscriptionRegistry subscriptionRegistry = subscriptionRegistry(
@@ -90,7 +88,7 @@ public class JBrokerApplication {
         ),
         messageQueueProcessor
     );
-    broker.run(BROKER_PORT);
+    broker.run();
   }
 
   private static ClientConnectionRegistry clientConnectionRegistry() {
